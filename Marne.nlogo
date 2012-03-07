@@ -3,18 +3,43 @@ globals [
   background
   mouse-click
   unit-size
+  last-placed-waypoint
 ]
 
-breed [ reds red-soldier ]
-breed [ blues blue-soldier ]
+breed [ reds red-unit ]
+breed [ blues blue-unit ]
+breed [ taxis taxi ]
+breed [ taxi-waypoints taxi-waypoint ]
+
+taxis-own [
+  path
+  current-waypoint
+  capacity
+  current-units
+]
+
+taxi-waypoints-own [
+  path
+  waypoint-number
+]
+
 
 to clear
   clear-all
   set-default-shape reds "arrow"
   set-default-shape blues "default"
+  set-default-shape taxis "default"
+  set-default-shape taxi-waypoints "triangle"
   set unit-size 5
+  set last-placed-waypoint 0
   
-  
+  create-taxis 1 [
+    set xcor random 20
+    set ycor random 20
+    set path 0
+    set current-waypoint 0
+    set size 3
+  ]
   reset-ticks
   
 end
@@ -34,6 +59,7 @@ end
 to go
   ask reds [fd 1 rt random 90 lt random 90]
   ask blues [fd 1 rt random 90 lt random 90]
+  ask taxis [ go-taxi ]
 end
 
 to load-form 
@@ -150,6 +176,50 @@ to setup-blue-form
   ] [print "Error"]
   file-close
 end
+
+
+;;;;;;;;;; TAXIS ;;;;;;;;;;;;;
+to go-taxi
+  let next-waypoint 0
+  
+  foreach sort taxi-waypoints [
+    if [waypoint-number] of ? = current-waypoint + 1 [
+      set next-waypoint ?
+      ;print next-waypoint
+    ]
+  ]
+  if (abs (xcor - ([xcor] of next-waypoint))) < 2 and (abs (ycor - ([ycor] of next-waypoint))) < 2 [
+    set current-waypoint (current-waypoint + 1)
+  ]
+  print next-waypoint
+  set heading atan (([xcor] of next-waypoint) - xcor) (([ycor] of next-waypoint) - ycor)
+  fd 1
+end
+
+to add-waypoint
+  if mouse-down? [ set mouse-click 1 ]
+  
+  if (mouse-down? = false and mouse-click = 1) [
+    create-taxi-waypoints 1 [
+        set color (path-number * 12)
+        set xcor mouse-xcor
+        set ycor mouse-ycor
+        set path path-number
+        set waypoint-number (last-placed-waypoint + 1)
+        set label waypoint-number
+        set size 1
+        
+        set last-placed-waypoint (last-placed-waypoint + 1)
+      ]
+    set mouse-click 0
+  ]
+end
+
+
+
+
+
+
 @#$#@#$#@
 GRAPHICS-WINDOW
 298
@@ -281,6 +351,34 @@ BUTTON
 Toggle Map
 setup-patches
 NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+INPUTBOX
+14
+521
+169
+581
+path-number
+1
+1
+0
+Number
+
+BUTTON
+174
+533
+291
+566
+NIL
+add-waypoint
+T
 1
 T
 OBSERVER
