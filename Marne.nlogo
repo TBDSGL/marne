@@ -33,7 +33,7 @@ to clear
   set unit-size 5
   set last-placed-waypoint 0
   
-  create-taxis 1 [
+  create-taxis 2 [
     set xcor random 20
     set ycor random 20
     set path 0
@@ -183,11 +183,12 @@ to go-taxi
   let next-waypoint 0
   
   foreach sort taxi-waypoints [
-    if [waypoint-number] of ? = current-waypoint + 1 [
+    if [path] of ? = path and [waypoint-number] of ? = current-waypoint + 1 [
       set next-waypoint ?
       ;print next-waypoint
     ]
   ]
+  if next-waypoint = 0 [ stop ]
   if (abs (xcor - ([xcor] of next-waypoint))) < 2 and (abs (ycor - ([ycor] of next-waypoint))) < 2 [
     set current-waypoint (current-waypoint + 1)
   ]
@@ -213,6 +214,10 @@ to add-waypoint
       ]
     set mouse-click 0
   ]
+end
+
+to reset-last-waypoint
+  set last-placed-waypoint 0
 end
 
 
@@ -366,7 +371,7 @@ INPUTBOX
 169
 581
 path-number
-1
+2
 1
 0
 Number
@@ -379,6 +384,23 @@ BUTTON
 NIL
 add-waypoint
 T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+176
+583
+330
+616
+NIL
+reset-last-waypoint
+NIL
 1
 T
 OBSERVER
