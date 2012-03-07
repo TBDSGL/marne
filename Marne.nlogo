@@ -3,7 +3,7 @@ globals [
   background
   mouse-click
   unit-size
-  last-placed-waypoint
+  ;last-placed-waypoint
 ]
 
 breed [ reds red-unit ]
@@ -32,14 +32,7 @@ to clear
   set-default-shape taxi-waypoints "triangle"
   set unit-size 5
   set last-placed-waypoint 0
-  
-  create-taxis 2 [
-    set xcor random 20
-    set ycor random 20
-    set path 0
-    set current-waypoint 0
-    set size 3
-  ]
+
   reset-ticks
   
 end
@@ -57,6 +50,7 @@ to setup-patches
 end
 
 to go
+  tick
   ask reds [fd 1 rt random 90 lt random 90]
   ask blues [fd 1 rt random 90 lt random 90]
   ask taxis [ go-taxi ]
@@ -134,6 +128,16 @@ to add-unit
       ]
     ]
     
+    if type-to-add = "taxi" [
+      create-taxis 1 [
+        set xcor mouse-xcor
+        set ycor mouse-ycor
+        set path path-number
+        set current-waypoint 0
+        set size 3
+      ]
+    ]
+    
     set mouse-click 0
   ]
   
@@ -192,7 +196,7 @@ to go-taxi
   if (abs (xcor - ([xcor] of next-waypoint))) < 2 and (abs (ycor - ([ycor] of next-waypoint))) < 2 [
     set current-waypoint (current-waypoint + 1)
   ]
-  print next-waypoint
+  ;print next-waypoint
   set heading atan (([xcor] of next-waypoint) - xcor) (([ycor] of next-waypoint) - ycor)
   fd 1
 end
@@ -227,10 +231,10 @@ end
 
 @#$#@#$#@
 GRAPHICS-WINDOW
-298
-17
-1491
-841
+384
+16
+1577
+840
 45
 30
 13.0
@@ -254,10 +258,10 @@ ticks
 30.0
 
 BUTTON
-56
-224
-119
-257
+20
+82
+83
+115
 Save
 save-form
 NIL
@@ -271,10 +275,10 @@ NIL
 1
 
 BUTTON
-52
-82
-121
-115
+19
+29
+88
+62
 NIL
 clear
 NIL
@@ -288,10 +292,10 @@ NIL
 1
 
 BUTTON
-55
-140
-118
-173
+103
+28
+166
+61
 NIL
 Go
 T
@@ -305,10 +309,10 @@ NIL
 1
 
 BUTTON
-57
-278
-121
-311
+104
+81
+168
+114
 Load
 load-form
 NIL
@@ -322,20 +326,20 @@ NIL
 1
 
 CHOOSER
-23
-365
-161
-410
+20
+147
+158
+192
 type-to-add
 type-to-add
-"red" "blue"
-0
+"red" "blue" "taxi"
+2
 
 BUTTON
-173
-372
-259
-405
+179
+151
+265
+184
 NIL
 add-unit
 T
@@ -349,10 +353,10 @@ NIL
 1
 
 BUTTON
-62
-463
-165
-496
+215
+28
+318
+61
 Toggle Map
 setup-patches
 NIL
@@ -366,21 +370,21 @@ NIL
 1
 
 INPUTBOX
-14
-521
-169
-581
+5
+208
+160
+268
 path-number
-2
+1
 1
 0
 Number
 
 BUTTON
-174
-533
-291
-566
+170
+219
+287
+252
 NIL
 add-waypoint
 T
@@ -394,10 +398,10 @@ NIL
 1
 
 BUTTON
-176
-583
-330
-616
+171
+298
+325
+331
 NIL
 reset-last-waypoint
 NIL
@@ -409,6 +413,17 @@ NIL
 NIL
 NIL
 1
+
+INPUTBOX
+4
+287
+159
+347
+last-placed-waypoint
+0
+1
+0
+Number
 
 @#$#@#$#@
 ## WHAT IS IT?
