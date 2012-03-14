@@ -10,6 +10,23 @@ breed [ reds red-unit ]
 breed [ blues blue-unit ]
 breed [ taxis taxi ]
 breed [ taxi-waypoints taxi-waypoint ]
+breed [ frontline_arrows frontline_arrow]
+
+;;DEFINE REDS (Germans);;
+reds-own [
+  soldierNo
+  artilleryNo
+]
+
+;;DEFINE BLUES (French);;
+blues-own [ 
+  soldierNo
+  artilleryNo
+]
+
+frontline_arrows-own [
+ direction 
+]
 
 taxis-own [
   path
@@ -23,13 +40,16 @@ taxi-waypoints-own [
   waypoint-number
 ]
 
-
+;;**
+;; Clears the screen
+;;**
 to clear
   clear-all
   set-default-shape reds "arrow"
   set-default-shape blues "default"
   set-default-shape taxis "default"
   set-default-shape taxi-waypoints "triangle"
+  set-default-shape frontline_arrows "arrow"
   set unit-size 5
   set last-placed-waypoint 0
 
@@ -37,6 +57,9 @@ to clear
   
 end
 
+;;**
+;; Sets up the patches
+;;**
 to setup-patches
     clear-drawing
     ask patches [ set pcolor 38 ]
@@ -49,14 +72,22 @@ to setup-patches
     ]
 end
 
+;;**
+;; Runs the simulation
+;; **
 to go
   tick
-  ask reds [fd 1 rt random 90 lt random 90]
-  ask blues [fd 1 rt random 90 lt random 90]
+  ;;ask reds [fd 1 rt random 90 lt random 90]
+  ;;ask blues [fd 1 rt random 90 lt random 90]
   ask taxis [ go-taxi ]
+  ask frontline_arrows [ go-frontline_arrow ]
 end
 
-to load-form 
+
+;;**
+;; Loads the data
+;;**
+to load-form
   ;setup-patches
   ;setup-carth-form
   ;setup-rome-form
@@ -65,12 +96,16 @@ to load-form
   ;set-default-shape reds "person"
   ;set-default-shape blues "person"
   
-  setup-red-form
-  setup-blue-form
+  ;;setup-red-form
+  ;;setup-blue-form
+  setup-frontline
   
   reset-ticks
 end
 
+;;**
+;; Saves the data
+;;**
 to save-form
   ;;save the red team coordinates
   carefully [ file-delete "red.txt" ][ write "File Not Deleted" ]
@@ -96,9 +131,11 @@ to save-form
   
   file-close
   
-end 
+end
 
-
+;;**
+;; Adds a unit to the screen
+;;**
 to add-unit
   ;;TODO: Debug code temporarily creates soldiers in the 3rd quadrant to easily note the troop locations
     ;create-blues 1 [
@@ -143,10 +180,13 @@ to add-unit
   
 end
 
+;;**
+;; Sets up the red units
+;;**
 to setup-red-form
   ;;load red soldiers
   carefully [
-  file-open "red.txt"  
+  file-open "red.txt"
   let num-reds file-read
       
   while [num-reds > 0] [
@@ -159,13 +199,16 @@ to setup-red-form
   ]
   
   ] [print "Error"]
-  file-close 
-end 
+  file-close
+end
 
+;;**
+;; Sets up the blue units
+;;**
 to setup-blue-form
   ;;load blue soldiers
   carefully [
-  file-open "blue.txt"  
+  file-open "blue.txt"
   let num-blues file-read
       
   while [num-blues > 0] [
@@ -181,6 +224,87 @@ to setup-blue-form
   file-close
 end
 
+;;;;;;;;;; FRONTLINE ARROWS ;;;;;;;;;;;;;
+
+;;** 
+;; Sets up the front line
+;;**
+to setup-frontline
+  let start_y 20
+  let loopNo 0
+  ;;create 10 arrows
+  while [loopNo < 10] [
+    create-frontline_arrows 1 [
+    set color blue
+    set heading 90 ;;0 is north, 90 is east, etc
+    set xcor 10
+    set ycor start_y
+    ]
+  set loopNo (loopNo + 1)
+  set start_y (start_y - 2)
+  ]
+  
+  set loopNo 0
+  let first_id 150
+  while [loopNo < (count turtles)] [
+   show [who] of turtle loopNo
+   if  is-frontline_arrow? turtle loopNo
+   [
+     set first_id ([who] of turtle loopNo)
+     set loopNo (count turtles)
+   ]
+    set loopNo (loopNo + 1)
+  ]
+  
+  show first_id
+  
+  set loopNo 0
+  while [loopNo < 9]
+  [
+    ask turtle (first_id + loopNo) [ create-link-with turtle (first_id + loopNo + 1) ]
+    set loopNo (loopNo + 1)
+  ]
+  
+end
+
+to go-frontline_arrow 
+  ifelse (direction = "red")
+  [
+    set xcor (xcor + .1)
+    set color red
+    set heading 90
+    
+    ;;set pen-size 3
+    ;;pen-erase
+  ]
+  [
+    set xcor (xcor - .1)
+    set color blue
+    set heading 270
+  ]
+  
+  ifelse (xcor > 10)
+  [
+    set pen-size 2
+    pd
+    set color red
+  ]
+  [
+    set pen-size 2
+    pd
+    set color blue
+  ]
+
+
+  ifelse (random 6 <= 2)
+  [
+    set direction "blue"
+  ]
+  [
+    set direction "red"
+  ]
+
+end
 
 ;;;;;;;;;; TAXIS ;;;;;;;;;;;;;
 to go-taxi
@@ -223,12 +347,6 @@ end
 to reset-last-waypoint
   set last-placed-waypoint 0
 end
-
-
-
-
-
-
 @#$#@#$#@
 GRAPHICS-WINDOW
 384
@@ -333,7 +451,7 @@ CHOOSER
 type-to-add
 type-to-add
 "red" "blue" "taxi"
-2
+1
 
 BUTTON
 179
@@ -375,7 +493,7 @@ INPUTBOX
 160
 268
 path-number
-1
+2
 1
 0
 Number
@@ -754,7 +872,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.0
+NetLogo 5.0RC7
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
