@@ -1,3 +1,5 @@
+extensions [ netsend ]
+
 globals [
   r-file
   background
@@ -23,6 +25,10 @@ taxi-waypoints-own [
   waypoint-number
 ]
 
+to test
+  ask turtles [netsend:send "bleh" random 10]
+end
+
 
 to clear
   clear-all
@@ -34,6 +40,7 @@ to clear
   set last-placed-waypoint 0
 
   reset-ticks
+  
   
 end
 
@@ -223,18 +230,12 @@ end
 to reset-last-waypoint
   set last-placed-waypoint 0
 end
-
-
-
-
-
-
 @#$#@#$#@
 GRAPHICS-WINDOW
-384
-16
-1577
-840
+380
+10
+1573
+834
 45
 30
 13.0
@@ -424,6 +425,23 @@ last-placed-waypoint
 1
 0
 Number
+
+BUTTON
+29
+391
+92
+424
+NIL
+test
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
