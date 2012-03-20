@@ -39,6 +39,10 @@ public class NetSend extends DefaultCommand implements Container {
   }
   public void perform(Argument args[], Context context)
       throws ExtensionException, LogoException {
+    if (args[0].getString().equalsIgnoreCase("reset")) {
+      packets = new ArrayList<NetSendPacket>();
+      return;
+    }
 
     NetSendPacket n = new NetSendPacket(context.getAgent().world().ticks(),
 		    args[0].getString(),

@@ -43,7 +43,7 @@ taxi-waypoints-own [
 ]
 
 to test
-  ask turtles [netsend:send "bleh" random 10]
+  netsend:send "bleh" random 10
 end
 
 ;;**
@@ -58,6 +58,8 @@ to clear
   set-default-shape frontline_arrows "arrow"
   set unit-size 5
   set last-placed-waypoint 0
+
+  netsend:send "reset" 0
 
   reset-ticks
   
@@ -457,7 +459,7 @@ CHOOSER
 type-to-add
 type-to-add
 "red" "blue" "taxi"
-1
+2
 
 BUTTON
 179
