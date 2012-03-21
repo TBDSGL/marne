@@ -1,0 +1,302 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		2C51A72E15191BB60093DF0E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C51A72D15191BB60093DF0E /* UIKit.framework */; };
+		2C51A73015191BB60093DF0E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C51A72F15191BB60093DF0E /* Foundation.framework */; };
+		2C51A73215191BB60093DF0E /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C51A73115191BB60093DF0E /* CoreGraphics.framework */; };
+		2C51A73815191BB60093DF0E /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2C51A73615191BB60093DF0E /* InfoPlist.strings */; };
+		2C51A73A15191BB60093DF0E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2C51A73915191BB60093DF0E /* main.m */; };
+		2C51A73E15191BB60093DF0E /* DKGAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2C51A73D15191BB60093DF0E /* DKGAppDelegate.m */; };
+		2C51A74115191BB60093DF0E /* DKGViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2C51A74015191BB60093DF0E /* DKGViewController.m */; };
+		2C51A74415191BB60093DF0E /* DKGViewController_iPhone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2C51A74215191BB60093DF0E /* DKGViewController_iPhone.xib */; };
+		2C51A74715191BB60093DF0E /* DKGViewController_iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2C51A74515191BB60093DF0E /* DKGViewController_iPad.xib */; };
+		2C51A74F15191F340093DF0E /* DKGNetSendPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 2C51A74E15191F340093DF0E /* DKGNetSendPacket.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		2C51A72915191BB60093DF0E /* Marne.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Marne.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2C51A72D15191BB60093DF0E /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		2C51A72F15191BB60093DF0E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		2C51A73115191BB60093DF0E /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		2C51A73515191BB60093DF0E /* Marne-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Marne-Info.plist"; sourceTree = "<group>"; };
+		2C51A73715191BB60093DF0E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		2C51A73915191BB60093DF0E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		2C51A73B15191BB60093DF0E /* Marne-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Marne-Prefix.pch"; sourceTree = "<group>"; };
+		2C51A73C15191BB60093DF0E /* DKGAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DKGAppDelegate.h; sourceTree = "<group>"; };
+		2C51A73D15191BB60093DF0E /* DKGAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DKGAppDelegate.m; sourceTree = "<group>"; };
+		2C51A73F15191BB60093DF0E /* DKGViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DKGViewController.h; sourceTree = "<group>"; };
+		2C51A74015191BB60093DF0E /* DKGViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DKGViewController.m; sourceTree = "<group>"; };
+		2C51A74315191BB60093DF0E /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/DKGViewController_iPhone.xib; sourceTree = "<group>"; };
+		2C51A74615191BB60093DF0E /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/DKGViewController_iPad.xib; sourceTree = "<group>"; };
+		2C51A74D15191F340093DF0E /* DKGNetSendPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DKGNetSendPacket.h; sourceTree = "<group>"; };
+		2C51A74E15191F340093DF0E /* DKGNetSendPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DKGNetSendPacket.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		2C51A72615191BB60093DF0E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2C51A72E15191BB60093DF0E /* UIKit.framework in Frameworks */,
+				2C51A73015191BB60093DF0E /* Foundation.framework in Frameworks */,
+				2C51A73215191BB60093DF0E /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		2C51A71E15191BB60093DF0E = {
+			isa = PBXGroup;
+			children = (
+				2C51A73315191BB60093DF0E /* Marne */,
+				2C51A72C15191BB60093DF0E /* Frameworks */,
+				2C51A72A15191BB60093DF0E /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		2C51A72A15191BB60093DF0E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2C51A72915191BB60093DF0E /* Marne.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		2C51A72C15191BB60093DF0E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2C51A72D15191BB60093DF0E /* UIKit.framework */,
+				2C51A72F15191BB60093DF0E /* Foundation.framework */,
+				2C51A73115191BB60093DF0E /* CoreGraphics.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		2C51A73315191BB60093DF0E /* Marne */ = {
+			isa = PBXGroup;
+			children = (
+				2C51A73C15191BB60093DF0E /* DKGAppDelegate.h */,
+				2C51A73D15191BB60093DF0E /* DKGAppDelegate.m */,
+				2C51A73F15191BB60093DF0E /* DKGViewController.h */,
+				2C51A74015191BB60093DF0E /* DKGViewController.m */,
+				2C51A74215191BB60093DF0E /* DKGViewController_iPhone.xib */,
+				2C51A74515191BB60093DF0E /* DKGViewController_iPad.xib */,
+				2C51A73415191BB60093DF0E /* Supporting Files */,
+				2C51A74D15191F340093DF0E /* DKGNetSendPacket.h */,
+				2C51A74E15191F340093DF0E /* DKGNetSendPacket.m */,
+			);
+			path = Marne;
+			sourceTree = "<group>";
+		};
+		2C51A73415191BB60093DF0E /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				2C51A73515191BB60093DF0E /* Marne-Info.plist */,
+				2C51A73615191BB60093DF0E /* InfoPlist.strings */,
+				2C51A73915191BB60093DF0E /* main.m */,
+				2C51A73B15191BB60093DF0E /* Marne-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		2C51A72815191BB60093DF0E /* Marne */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2C51A74A15191BB60093DF0E /* Build configuration list for PBXNativeTarget "Marne" */;
+			buildPhases = (
+				2C51A72515191BB60093DF0E /* Sources */,
+				2C51A72615191BB60093DF0E /* Frameworks */,
+				2C51A72715191BB60093DF0E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Marne;
+			productName = Marne;
+			productReference = 2C51A72915191BB60093DF0E /* Marne.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		2C51A72015191BB60093DF0E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				CLASSPREFIX = DKG;
+				LastUpgradeCheck = 0430;
+			};
+			buildConfigurationList = 2C51A72315191BB60093DF0E /* Build configuration list for PBXProject "Marne" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 2C51A71E15191BB60093DF0E;
+			productRefGroup = 2C51A72A15191BB60093DF0E /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				2C51A72815191BB60093DF0E /* Marne */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		2C51A72715191BB60093DF0E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2C51A73815191BB60093DF0E /* InfoPlist.strings in Resources */,
+				2C51A74415191BB60093DF0E /* DKGViewController_iPhone.xib in Resources */,
+				2C51A74715191BB60093DF0E /* DKGViewController_iPad.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2C51A72515191BB60093DF0E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2C51A73A15191BB60093DF0E /* main.m in Sources */,
+				2C51A73E15191BB60093DF0E /* DKGAppDelegate.m in Sources */,
+				2C51A74115191BB60093DF0E /* DKGViewController.m in Sources */,
+				2C51A74F15191F340093DF0E /* DKGNetSendPacket.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		2C51A73615191BB60093DF0E /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				2C51A73715191BB60093DF0E /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		2C51A74215191BB60093DF0E /* DKGViewController_iPhone.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				2C51A74315191BB60093DF0E /* en */,
+			);
+			name = DKGViewController_iPhone.xib;
+			sourceTree = "<group>";
+		};
+		2C51A74515191BB60093DF0E /* DKGViewController_iPad.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				2C51A74615191BB60093DF0E /* en */,
+			);
+			name = DKGViewController_iPad.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		2C51A74815191BB60093DF0E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		2C51A74915191BB60093DF0E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		2C51A74B15191BB60093DF0E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Marne/Marne-Prefix.pch";
+				INFOPLIST_FILE = "Marne/Marne-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		2C51A74C15191BB60093DF0E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Marne/Marne-Prefix.pch";
+				INFOPLIST_FILE = "Marne/Marne-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2C51A72315191BB60093DF0E /* Build configuration list for PBXProject "Marne" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2C51A74815191BB60093DF0E /* Debug */,
+				2C51A74915191BB60093DF0E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2C51A74A15191BB60093DF0E /* Build configuration list for PBXNativeTarget "Marne" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2C51A74B15191BB60093DF0E /* Debug */,
+				2C51A74C15191BB60093DF0E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 2C51A72015191BB60093DF0E /* Project object */;
+}

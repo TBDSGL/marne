@@ -84,6 +84,9 @@ public class NetSend extends DefaultCommand implements Container {
       index--;
     }
 
+    if (packets.get(index).tick <= tick)
+      return -1;
+
     return index;
 
   }
