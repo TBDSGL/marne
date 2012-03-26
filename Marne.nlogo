@@ -10,8 +10,14 @@ globals [
 
 breed [ reds red-unit ]
 breed [ blues blue-unit ]
+
 breed [ taxis taxi ]
 breed [ taxi-waypoints taxi-waypoint ]
+
+breed [ horses horse ]
+breed [ trains train ]
+breed [ walkers walker ]
+
 breed [ frontline_arrows frontline_arrow]
 
 ;;DEFINE REDS (Germans);;
@@ -31,6 +37,27 @@ frontline_arrows-own [
 ]
 
 taxis-own [
+  path
+  current-waypoint
+  capacity
+  current-units
+]
+
+trains-own [
+  path
+  current-waypoint
+  capacity
+  current-units
+]
+
+horses-own [
+  path
+  current-waypoint
+  capacity
+  current-units
+]
+
+walkers-own [
   path
   current-waypoint
   capacity
