@@ -459,14 +459,16 @@ to associate-waypoints
   if mouse-down? and mouse-click = 0 and any? waypoints [
     let closest-waypoint first sort-by [ [distancexy mouse-xcor mouse-ycor] of ?1 < [distancexy mouse-xcor mouse-ycor] of ?2 ] waypoints
     set association-root closest-waypoint
+    print "setting association-root"
   ]
   
   if mouse-down? [ set mouse-click 1 ]
   
   if (mouse-down? = false and mouse-click = 1 and any? waypoints) [
+    set mouse-click 0
     let closest-waypoint first sort-by [ [distancexy mouse-xcor mouse-ycor] of ?1 < [distancexy mouse-xcor mouse-ycor] of ?2 ] waypoints
     ask association-root [ set next-waypoints lput ( list ([id] of closest-waypoint) (path-type) ) next-waypoints ]
-    set mouse-click 0
+    
   ]
 end
 
