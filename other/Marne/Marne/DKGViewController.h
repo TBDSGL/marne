@@ -14,7 +14,9 @@
 @property NSMutableArray *packets;
 @property NSTimer *timer;
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
+@property (weak, nonatomic) IBOutlet UITextField *ipField;
 
 - (IBAction)getData:(id)sender;
+- (IBAction)resetData:(id)sender;
 
 @end

@@ -14,6 +14,7 @@
 
 @implementation DKGViewController
 @synthesize scrollView;
+@synthesize ipField;
 @synthesize textBox, packets, timer;
 
 - (id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -35,6 +36,7 @@
 {
     [self setTextBox:nil];
     [self setScrollView:nil];
+    [self setIpField:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
 }
@@ -73,11 +75,12 @@
 
 - (void)doGetData:(NSTimer*)theTimer {
     NSLog(@"Getting data");
+    NSString *ipAddr = ipField.text;
     NSNumber *lastTick = [NSNumber numberWithDouble:0.0];
     if ([packets count] > 0) {
         lastTick = [[packets lastObject] tick];
     }
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://192.168.11.4:8080/?tick=%@", lastTick]];
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://%@:8080/?tick=%@", ipAddr, lastTick]];
     NSURLRequest *req = [NSURLRequest requestWithURL:url];
     NSData *data = [NSURLConnection sendSynchronousRequest:req returningResponse:nil error:nil];
     NSLog(@"%@\n", data);
@@ -96,8 +99,13 @@
     }
     
     textBox.text = [packets description];
-    NSLog(@"packets: %@", [packets description]);
+    NSLog(@"new packets: %@", lines);
     
     
+}
+- (IBAction)resetData:(id)sender {
+    packets = [NSMutableArray array];
+    [timer invalidate];
+    timer = nil;
 }
 @end
