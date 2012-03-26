@@ -43,6 +43,7 @@ taxis-own [
   current-waypoint
   capacity
   current-units
+  myType
 ]
 
 trains-own [
@@ -80,6 +81,7 @@ taxi-waypoints-own [
 waypoints-own [
   id
   next-waypoints
+  weight
 ]
 
 to test
@@ -366,19 +368,57 @@ end
 to go-taxi
   let next-waypoint 0
   
-  foreach sort taxi-waypoints [
-    if [path] of ? = path and [waypoint-number] of ? = current-waypoint + 1 [
-      set next-waypoint ?
-      ;print next-waypoint
+  ;get "next waypoint"
+  ;determine which of the next waypoints which will be inside method "next waypoint"
+  ;return the next waypoint
+  
+  ;check to see if within range of a waypoint
+  if (abs (xcor - ([xcor] of current-waypoint))) < 2 and (abs (ycor - ([ycor] of current-waypoint))) < 2 [
+    ;if only one next one, simply use the next one
+    set current-waypoint [get-next-waypoint] of current-waypoint
     ]
+  
+  if current-waypoint != 0 [
+    ;print next-waypoint
+    set heading atan (([xcor] of next-waypoint) - xcor) (([ycor] of next-waypoint) - ycor)
+    fd 1
   ]
-  if next-waypoint = 0 [ stop ]
-  if (abs (xcor - ([xcor] of next-waypoint))) < 2 and (abs (ycor - ([ycor] of next-waypoint))) < 2 [
-    set current-waypoint (current-waypoint + 1)
+end
+
+;;**
+;; Determine the next waypoint to go to
+;;**
+to-report get-next-waypoint
+  ifelse length next-waypoints  = 0 [
+    report 0
   ]
-  ;print next-waypoint
-  set heading atan (([xcor] of next-waypoint) - xcor) (([ycor] of next-waypoint) - ycor)
-  fd 1
+  [
+    let max-waypoint 0
+    foreach next-waypoints [
+      ;ask what its weight is, which ever one is the highest weight, we'll return that waypoint
+      let temp-waypoint (get-waypoint-by-id item 0 ?)
+      ;intilaize for the first loop through
+      if max-waypoint = 0 [
+        set max-waypoint ? 
+      ]
+      ;check to see if a new max waypoint has been found
+      if [weight] of max-waypoint < get-waypoint-weight temp-waypoint [
+        max-weight = temp-weight
+      ]
+    ]
+    
+    report max-waypoint
+  ]
+end
+
+to-report get-waypoint-weight [waypoint]
+    let report-weight weight
+    
+    foreach next-waypoints [
+      set report-weight report-weight + get-waypoint-weight of ?
+    ]
+    
+    report report-weight
 end
 
 to add-waypoint
