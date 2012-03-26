@@ -368,21 +368,29 @@ end
 
 ;;;;;;;;;; TAXIS ;;;;;;;;;;;;;
 to go-taxi
-  let next-waypoint 0
+  
+  
   
   ;get "next waypoint"
   ;determine which of the next waypoints which will be inside method "next waypoint"
   ;return the next waypoint
+  if current-waypoint = 0 and any? waypoints [
+    let closest-waypoint first sort-by [ [distancexy [xcor] of myself [ycor] of myself] of ?1 < [distancexy [xcor] of myself [ycor] of myself] of ?2 ] waypoints
+    set current-waypoint closest-waypoint
+  ]
+  
   
   ;check to see if within range of a waypoint
-  if (abs (xcor - ([xcor] of current-waypoint))) < 2 and (abs (ycor - ([ycor] of current-waypoint))) < 2 [
+  if (current-waypoint != 0 and (abs (xcor - ([xcor] of current-waypoint))) < 2 and (abs (ycor - ([ycor] of current-waypoint))) < 2) [
     ;if only one next one, simply use the next one
     set current-waypoint [get-next-waypoint] of current-waypoint
-    ]
-  
+  ]
+    
+    
+    
+  ;print next-waypoint
   if current-waypoint != 0 [
-    ;print next-waypoint
-    set heading atan (([xcor] of next-waypoint) - xcor) (([ycor] of next-waypoint) - ycor)
+    set heading atan (([xcor] of current-waypoint) - xcor) (([ycor] of current-waypoint) - ycor)
     fd 1
   ]
 end
@@ -401,11 +409,11 @@ to-report get-next-waypoint
       let temp-waypoint (get-waypoint-by-id item 0 ?)
       ;intilaize for the first loop through
       if max-waypoint = 0 [
-        set max-waypoint ? 
+        set max-waypoint temp-waypoint
       ]
       ;check to see if a new max waypoint has been found
       if [weight] of max-waypoint < get-waypoint-weight temp-waypoint [
-        max-weight = temp-weight
+        set max-waypoint temp-waypoint
       ]
     ]
     
@@ -416,8 +424,8 @@ end
 to-report get-waypoint-weight [waypoint]
     let report-weight weight
     
-    foreach next-waypoints [
-      set report-weight report-weight + get-waypoint-weight of ?
+    foreach [next-waypoints] of waypoint [
+      set report-weight report-weight + get-waypoint-weight (get-waypoint-by-id item 0 ?)
     ]
     
     report report-weight
@@ -448,30 +456,24 @@ end
 
 
 to associate-waypoints
+  if mouse-down? and mouse-click = 0 and any? waypoints [
+    let closest-waypoint first sort-by [ [distancexy mouse-xcor mouse-ycor] of ?1 < [distancexy mouse-xcor mouse-ycor] of ?2 ] waypoints
+    set association-root closest-waypoint
+  ]
+  
   if mouse-down? [ set mouse-click 1 ]
   
   if (mouse-down? = false and mouse-click = 1 and any? waypoints) [
     let closest-waypoint first sort-by [ [distancexy mouse-xcor mouse-ycor] of ?1 < [distancexy mouse-xcor mouse-ycor] of ?2 ] waypoints
-    ifelse association-root = 0 [
-      ; set association-root to closest waypoint to mouse
-      set association-root closest-waypoint
-    ] [
-      ask association-root [ set next-waypoints lput ( list ([id] of closest-waypoint) (path-type) ) next-waypoints ]
-    ]
+    ask association-root [ set next-waypoints lput ( list ([id] of closest-waypoint) (path-type) ) next-waypoints ]
     set mouse-click 0
   ]
 end
 
-to new-association
-  set association-root 0
-end
 
 to-report get-waypoint-by-id [search-id]
-  ask waypoints [
-    if id = search-id [
-      report self
-    ]
-  ]
+  report first sort waypoints with [id = search-id]
+  
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -694,23 +696,6 @@ BUTTON
 NIL
 associate-waypoints
 T
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-BUTTON
-194
-453
-327
-486
-NIL
-new-association
-NIL
 1
 T
 OBSERVER
