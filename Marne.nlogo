@@ -6,6 +6,7 @@ globals [
   mouse-click
   unit-size
   ;last-placed-waypoint
+  association-root
 ]
 
 breed [ reds red-unit ]
@@ -228,6 +229,7 @@ to add-unit
         set xcor mouse-xcor
         set ycor mouse-ycor
         set id random 10000000
+        set next-waypoints []
       ]
     ]
     
@@ -402,6 +404,34 @@ end
 
 to reset-last-waypoint
   set last-placed-waypoint 0
+end
+
+
+to associate-waypoints
+  if mouse-down? [ set mouse-click 1 ]
+  
+  if (mouse-down? = false and mouse-click = 1 and any? waypoints) [
+    let closest-waypoint first sort-by [ [distancexy mouse-xcor mouse-ycor] of ?1 < [distancexy mouse-xcor mouse-ycor] of ?2 ] waypoints
+    ifelse association-root = 0 [
+      ; set association-root to closest waypoint to mouse
+      set association-root closest-waypoint
+    ] [
+      ask association-root [ set next-waypoints lput ( list ([id] of closest-waypoint) (path-type) ) next-waypoints ]
+    ]
+    set mouse-click 0
+  ]
+end
+
+to new-association
+  set association-root 0
+end
+
+to-report get-waypoint-by-id [search-id]
+  ask waypoints [
+    if id = search-id [
+      report self
+    ]
+  ]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -615,6 +645,50 @@ NIL
 NIL
 NIL
 1
+
+BUTTON
+23
+452
+181
+485
+NIL
+associate-waypoints
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+194
+453
+327
+486
+NIL
+new-association
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+CHOOSER
+34
+504
+172
+549
+path-type
+path-type
+"rail" "road" "footpath"
+0
 
 @#$#@#$#@
 ## WHAT IS IT?
