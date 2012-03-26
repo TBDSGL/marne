@@ -18,6 +18,8 @@ breed [ horses horse ]
 breed [ trains train ]
 breed [ walkers walker ]
 
+breed [ waypoints waypoint ]
+
 breed [ frontline_arrows frontline_arrow]
 
 ;;DEFINE REDS (Germans);;
@@ -67,6 +69,17 @@ walkers-own [
 taxi-waypoints-own [
   path
   waypoint-number
+]
+
+; id is a random big number indentifying the waypoint
+;
+; next-waypoints is a list of lists where
+; 0th item is id of next waypoint
+; 1st item is type of path to that waypoint
+; ex. [ [ 123 "road" ] [ 432 "rail" ] [ 980 "road" ] ]
+waypoints-own [
+  id
+  next-waypoints
 ]
 
 to test
@@ -207,6 +220,14 @@ to add-unit
         set path path-number
         set current-waypoint 0
         set size 3
+      ]
+    ]
+    
+    if type-to-add = "waypoint" [
+      create-waypoints 1 [
+        set xcor mouse-xcor
+        set ycor mouse-ycor
+        set id random 10000000
       ]
     ]
     
@@ -485,8 +506,8 @@ CHOOSER
 192
 type-to-add
 type-to-add
-"red" "blue" "taxi"
-2
+"red" "blue" "taxi" "waypoint"
+3
 
 BUTTON
 179
