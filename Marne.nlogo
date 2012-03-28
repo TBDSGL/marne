@@ -15,6 +15,8 @@ breed [ blues blue-unit ]
 breed [ taxis taxi ]
 breed [ taxi-waypoints taxi-waypoint ]
 
+breed [ transports transport ]
+
 breed [ horses horse ]
 breed [ trains train ]
 breed [ walkers walker ]
@@ -63,6 +65,13 @@ horses-own [
 
 walkers-own [
   path
+  current-waypoint
+  capacity
+  current-units
+]
+
+transports-own [
+  transport-type
   current-waypoint
   capacity
   current-units
@@ -130,7 +139,7 @@ to go
   tick
   ;;ask reds [fd 1 rt random 90 lt random 90]
   ;;ask blues [fd 1 rt random 90 lt random 90]
-  ask taxis [ go-taxi ]
+  ask transports [ go-transport ]
   ask frontline_arrows [ go-frontline_arrow ]
   ask waypoints [ set label get-waypoint-weight self ]
 end
@@ -218,12 +227,13 @@ to add-unit
     ]
     
     if type-to-add = "taxi" [
-      create-taxis 1 [
+      create-transports 1 [
         set xcor mouse-xcor
         set ycor mouse-ycor
-        set path path-number
+        ;set path path-number
         set current-waypoint 0
         set size 3
+        set transport-type "taxi"
       ]
     ]
     
@@ -369,7 +379,7 @@ to go-frontline_arrow
 end
 
 ;;;;;;;;;; TAXIS ;;;;;;;;;;;;;
-to go-taxi
+to go-transport
   
   
   
