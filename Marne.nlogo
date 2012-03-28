@@ -132,6 +132,7 @@ to go
   ;;ask blues [fd 1 rt random 90 lt random 90]
   ask taxis [ go-taxi ]
   ask frontline_arrows [ go-frontline_arrow ]
+  ask waypoints [ set label get-waypoint-weight self ]
 end
 
 
@@ -232,6 +233,7 @@ to add-unit
         set ycor mouse-ycor
         set id random 10000000
         set next-waypoints []
+        set weight random 5
       ]
     ]
     
@@ -412,7 +414,7 @@ to-report get-next-waypoint
         set max-waypoint temp-waypoint
       ]
       ;check to see if a new max waypoint has been found
-      if [weight] of max-waypoint < get-waypoint-weight temp-waypoint [
+      if get-waypoint-weight max-waypoint < get-waypoint-weight temp-waypoint [
         set max-waypoint temp-waypoint
       ]
     ]
@@ -456,19 +458,21 @@ end
 
 
 to associate-waypoints
-  if mouse-down? and mouse-click = 0 and any? waypoints [
+  if mouse-down? and (mouse-click = 0) and (any? waypoints) [
     let closest-waypoint first sort-by [ [distancexy mouse-xcor mouse-ycor] of ?1 < [distancexy mouse-xcor mouse-ycor] of ?2 ] waypoints
     set association-root closest-waypoint
     print "setting association-root"
+    set mouse-click 1
   ]
   
-  if mouse-down? [ set mouse-click 1 ]
+  ;if mouse-down? [ set mouse-click 1 ]
   
   if (mouse-down? = false and mouse-click = 1 and any? waypoints) [
-    set mouse-click 0
+    
     let closest-waypoint first sort-by [ [distancexy mouse-xcor mouse-ycor] of ?1 < [distancexy mouse-xcor mouse-ycor] of ?2 ] waypoints
     ask association-root [ set next-waypoints lput ( list ([id] of closest-waypoint) (path-type) ) next-waypoints ]
-    
+    ask association-root [ create-link-with closest-waypoint ]
+    set mouse-click 0
   ]
 end
 
