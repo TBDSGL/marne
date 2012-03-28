@@ -422,7 +422,7 @@ to-report get-next-waypoint
 end
 
 to-report get-waypoint-weight [waypoint]
-    let report-weight weight
+    let report-weight [weight] of waypoint
     
     foreach [next-waypoints] of waypoint [
       set report-weight report-weight + get-waypoint-weight (get-waypoint-by-id item 0 ?)
@@ -581,7 +581,7 @@ CHOOSER
 type-to-add
 type-to-add
 "red" "blue" "taxi" "waypoint"
-3
+2
 
 BUTTON
 179
