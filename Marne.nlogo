@@ -234,6 +234,20 @@ to add-unit
         set current-waypoint 0
         set size 3
         set transport-type "taxi"
+        
+        ;change shape of the transport depending on what kind of transport is being modeled
+        if (transport-type = "taxi")
+        [
+          set shape "car"
+        ]
+        if (transport-type = "train")
+        [
+          set shape "train"
+        ]
+        if (transport-type = "foot")
+        [
+          set shape "person"
+        ]
       ]
     ]
     
@@ -244,6 +258,8 @@ to add-unit
         set id random 10000000
         set next-waypoints []
         set weight random 5
+        set shape "circle"
+        set color red
       ]
     ]
     
@@ -482,9 +498,10 @@ to associate-waypoints
     let closest-waypoint first sort-by [ [distancexy mouse-xcor mouse-ycor] of ?1 < [distancexy mouse-xcor mouse-ycor] of ?2 ] waypoints
     ask association-root [ set next-waypoints lput ( list ([id] of closest-waypoint) (path-type) ) next-waypoints ]
     
+    ;change properties of link depending on type of trail being traveled on
     if (path-type = "rail")
     [
-      ask association-root [ create-link-with closest-waypoint [set color white set thickness .5] ]
+      ask association-root [ create-link-with closest-waypoint [set color blue set thickness .5] ]
     ]
     if (path-type = "road")
     [
@@ -601,20 +618,20 @@ NIL
 1
 
 CHOOSER
-20
-147
-158
-192
+17
+132
+155
+177
 type-to-add
 type-to-add
 "red" "blue" "taxi" "waypoint"
-3
+2
 
 BUTTON
-179
-151
-265
-184
+176
+136
+262
+169
 NIL
 add-unit
 T
@@ -645,10 +662,10 @@ NIL
 1
 
 INPUTBOX
-5
-208
-160
-268
+14
+200
+169
+260
 path-number
 2
 1
@@ -656,10 +673,10 @@ path-number
 Number
 
 BUTTON
-170
-219
-287
-252
+187
+215
+304
+248
 NIL
 add-waypoint
 T
@@ -673,10 +690,10 @@ NIL
 1
 
 BUTTON
-171
-298
+183
+292
+337
 325
-331
 NIL
 reset-last-waypoint
 NIL
@@ -690,10 +707,10 @@ NIL
 1
 
 INPUTBOX
-4
-287
-159
-347
+12
+278
+167
+338
 last-placed-waypoint
 0
 1
@@ -742,7 +759,7 @@ CHOOSER
 path-type
 path-type
 "rail" "road" "footpath"
-2
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -1006,6 +1023,23 @@ Circle -16777216 true false 30 30 240
 Circle -7500403 true true 60 60 180
 Circle -16777216 true false 90 90 120
 Circle -7500403 true true 120 120 60
+
+train
+false
+0
+Rectangle -7500403 true true 30 105 240 150
+Polygon -7500403 true true 240 105 270 30 180 30 210 105
+Polygon -7500403 true true 195 180 270 180 300 210 195 210
+Circle -7500403 true true 0 165 90
+Circle -7500403 true true 240 225 30
+Circle -7500403 true true 90 165 90
+Circle -7500403 true true 195 225 30
+Rectangle -7500403 true true 0 30 105 150
+Rectangle -16777216 true false 30 60 75 105
+Polygon -7500403 true true 195 180 165 150 240 150 240 180
+Rectangle -7500403 true true 135 75 165 105
+Rectangle -7500403 true true 225 120 255 150
+Rectangle -16777216 true false 30 203 150 218
 
 tree
 false
