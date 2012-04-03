@@ -9,6 +9,8 @@ globals [
   association-root
 ]
 
+directed-link-breed [ waypoint-links waypoint-link ]
+
 breed [ reds red-unit ]
 breed [ blues blue-unit ]
 
@@ -523,15 +525,21 @@ to associate-waypoints
     ;change properties of link depending on type of trail being traveled on
     if (path-type = "rail")
     [
-      ask association-root [ create-link-with closest-waypoint [set color blue set thickness .5] ]
+      ask association-root [ create-waypoint-link-to closest-waypoint [
+          set color blue 
+          set thickness .1
+          set shape "rail"] ]
     ]
     if (path-type = "road")
     [
-      ask association-root [ create-link-with closest-waypoint [set color brown set thickness .25] ]
+      ask association-root [ create-waypoint-link-to closest-waypoint [
+          set color brown
+          set thickness .1
+          set shape "road"] ]
     ]
     if (path-type = "footpath")
     [
-      ask association-root [ create-link-with closest-waypoint [set color grey] ]
+      ask association-root [ create-waypoint-link-to closest-waypoint [set color grey] ]
     ]
     
     set mouse-click 0
@@ -647,7 +655,7 @@ CHOOSER
 type-to-add
 type-to-add
 "red" "blue" "taxi" "waypoint"
-2
+3
 
 BUTTON
 176
@@ -781,7 +789,7 @@ CHOOSER
 path-type
 path-type
 "rail" "road" "footpath"
-1
+2
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -1157,6 +1165,28 @@ default
 -0.2 0 1.0 0.0
 0.0 1 1.0 0.0
 0.2 0 1.0 0.0
+link direction
+true
+0
+Line -7500403 true 150 150 90 180
+Line -7500403 true 150 150 210 180
+
+rail
+0.0
+-0.2 1 4.0 4.0
+0.0 0 0.0 1.0
+0.2 1 4.0 4.0
+link direction
+true
+0
+Line -7500403 true 150 150 90 180
+Line -7500403 true 150 150 210 180
+
+road
+0.0
+-0.2 1 1.0 0.0
+0.0 1 4.0 4.0
+0.2 1 1.0 0.0
 link direction
 true
 0
