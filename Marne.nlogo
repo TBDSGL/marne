@@ -481,7 +481,20 @@ to associate-waypoints
     
     let closest-waypoint first sort-by [ [distancexy mouse-xcor mouse-ycor] of ?1 < [distancexy mouse-xcor mouse-ycor] of ?2 ] waypoints
     ask association-root [ set next-waypoints lput ( list ([id] of closest-waypoint) (path-type) ) next-waypoints ]
-    ask association-root [ create-link-with closest-waypoint ]
+    
+    if (path-type = "rail")
+    [
+      ask association-root [ create-link-with closest-waypoint [set color white set thickness .5] ]
+    ]
+    if (path-type = "road")
+    [
+      ask association-root [ create-link-with closest-waypoint [set color brown set thickness .25] ]
+    ]
+    if (path-type = "footpath")
+    [
+      ask association-root [ create-link-with closest-waypoint [set color grey] ]
+    ]
+    
     set mouse-click 0
   ]
 end
@@ -595,7 +608,7 @@ CHOOSER
 type-to-add
 type-to-add
 "red" "blue" "taxi" "waypoint"
-2
+3
 
 BUTTON
 179
@@ -729,7 +742,7 @@ CHOOSER
 path-type
 path-type
 "rail" "road" "footpath"
-0
+2
 
 @#$#@#$#@
 ## WHAT IS IT?
