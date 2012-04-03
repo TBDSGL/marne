@@ -238,11 +238,11 @@ to add-unit
         ;change shape of the transport depending on what kind of transport is being modeled
         if (transport-type = "taxi")
         [
-          set shape "car"
+          set shape "car right"
         ]
         if (transport-type = "train")
         [
-          set shape "train"
+          set shape "train right"
         ]
         if (transport-type = "foot")
         [
@@ -413,9 +413,31 @@ to go-transport
     ;if only one next one, simply use the next one
     set current-waypoint [get-next-waypoint] of current-waypoint
   ]
-    
-    
-    
+  
+  ;change the direction the transport is facing when moving in a certain direction
+  if (heading < 180)
+  [
+    if (transport-type = "taxi")
+    [
+      set shape "car right"
+    ]
+    if (transport-type = "train")
+    [
+      set shape "train right"
+    ]
+  ]
+  if (heading > 180)
+  [
+    if (transport-type = "taxi")
+    [
+      set shape "car left"
+    ]
+    if (transport-type = "train")
+    [
+      set shape "train left"
+    ]
+  ]  
+  
   ;print next-waypoint
   if current-waypoint != 0 [
     set heading atan (([xcor] of current-waypoint) - xcor) (([ycor] of current-waypoint) - ycor)
@@ -844,7 +866,17 @@ Circle -16777216 true false 135 90 30
 Line -16777216 false 150 105 195 60
 Line -16777216 false 150 105 105 60
 
-car
+car left
+false
+0
+Polygon -7500403 true true 0 180 21 164 39 144 60 135 74 132 87 106 97 84 115 63 141 50 165 50 225 60 300 150 300 165 300 225 0 225 0 180
+Circle -16777216 true false 30 180 90
+Circle -16777216 true false 180 180 90
+Polygon -16777216 true false 138 80 168 78 166 135 91 135 106 105 111 96 120 89
+Circle -7500403 true true 195 195 58
+Circle -7500403 true true 47 195 58
+
+car right
 false
 0
 Polygon -7500403 true true 300 180 279 164 261 144 240 135 226 132 213 106 203 84 185 63 159 50 135 50 75 60 0 150 0 165 0 225 300 225 300 180
@@ -1024,7 +1056,24 @@ Circle -7500403 true true 60 60 180
 Circle -16777216 true false 90 90 120
 Circle -7500403 true true 120 120 60
 
-train
+train left
+false
+0
+Rectangle -7500403 true true 60 105 270 150
+Polygon -7500403 true true 60 105 30 30 120 30 90 105
+Polygon -7500403 true true 105 180 30 180 0 210 105 210
+Circle -7500403 true true 210 165 90
+Circle -7500403 true true 30 225 30
+Circle -7500403 true true 120 165 90
+Circle -7500403 true true 75 225 30
+Rectangle -7500403 true true 195 30 300 150
+Rectangle -16777216 true false 225 60 270 105
+Polygon -7500403 true true 105 180 135 150 60 150 60 180
+Rectangle -7500403 true true 135 75 165 105
+Rectangle -7500403 true true 45 120 75 150
+Rectangle -16777216 true false 150 203 270 218
+
+train right
 false
 0
 Rectangle -7500403 true true 30 105 240 150
@@ -1076,16 +1125,6 @@ Circle -16777216 true false 24 174 42
 Circle -7500403 false true 24 174 42
 Circle -7500403 false true 144 174 42
 Circle -7500403 false true 234 174 42
-
-turtle
-true
-0
-Polygon -10899396 true false 215 204 240 233 246 254 228 266 215 252 193 210
-Polygon -10899396 true false 195 90 225 75 245 75 260 89 269 108 261 124 240 105 225 105 210 105
-Polygon -10899396 true false 105 90 75 75 55 75 40 89 31 108 39 124 60 105 75 105 90 105
-Polygon -10899396 true false 132 85 134 64 107 51 108 17 150 2 192 18 192 52 169 65 172 87
-Polygon -10899396 true false 85 204 60 233 54 254 72 266 85 252 107 210
-Polygon -7500403 true true 119 75 179 75 209 101 224 135 220 225 175 261 128 261 81 224 74 135 88 99
 
 wheel
 false
