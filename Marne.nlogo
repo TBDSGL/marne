@@ -257,6 +257,7 @@ to add-unit
         set current-waypoint 0
         set size 3
         set transport-type "taxi"
+        set current-units random 20
         
         ;change shape of the transport depending on what kind of transport is being modeled
         if (transport-type = "taxi")
@@ -280,7 +281,7 @@ to add-unit
         set ycor mouse-ycor
         set id random 10000000
         set next-waypoints []
-        set weight random 5
+        set weight 0
         set shape "circle"
         set color sky
       ]
@@ -293,9 +294,9 @@ to add-unit
         set id random 10000000
         set shape "square"
         set color red
-        set soldiers 100
+        set-soldiers 100
         set team "french"
-        set weight random 5
+        ;set weight soldiers
         set next-waypoints []
         set size 5
       ]
@@ -309,7 +310,7 @@ to add-unit
         set shape "square"
         set color blue
         set team "german"
-        set soldiers 100
+        set-soldiers 100
         set weight random 5
         set next-waypoints []
         set size 5
@@ -367,6 +368,7 @@ end
 
 to set-soldiers [newSoliderNo]
   set soldiers newSoliderNo
+  set weight soldiers
   set size soldiers / 10
 end
 
@@ -539,9 +541,15 @@ to go-transport
   
   
   ;check to see if within range of a waypoint
+  ; TODO change to "distance" command
   if (current-waypoint != 0 and (abs (xcor - ([xcor] of current-waypoint))) < 2 and (abs (ycor - ([ycor] of current-waypoint))) < 2) [
     ;if only one next one, simply use the next one
+    if (is-unit? current-waypoint) [
+      ask current-waypoint [ set-soldiers (soldiers + [current-units] of myself) ]
+      die
+    ]
     set current-waypoint [get-next-waypoint] of current-waypoint
+
   ]
   
   ;change the direction the transport is facing when moving in a certain direction
@@ -583,21 +591,21 @@ to-report get-next-waypoint
     report 0
   ]
   [
-    let max-waypoint 0
+    let min-waypoint 0
     foreach next-waypoints [
       ;ask what its weight is, which ever one is the highest weight, we'll return that waypoint
       let temp-waypoint (get-waypoint-by-id item 0 ?)
       ;intilaize for the first loop through
-      if max-waypoint = 0 [
-        set max-waypoint temp-waypoint
+      if min-waypoint = 0 [
+        set min-waypoint temp-waypoint
       ]
       ;check to see if a new max waypoint has been found
-      if get-waypoint-weight max-waypoint < get-waypoint-weight temp-waypoint [
-        set max-waypoint temp-waypoint
+      if get-waypoint-weight min-waypoint > get-waypoint-weight temp-waypoint [
+        set min-waypoint temp-waypoint
       ]
     ]
     
-    report max-waypoint
+    report min-waypoint
   ]
 end
 
@@ -785,7 +793,7 @@ CHOOSER
 type-to-add
 type-to-add
 "red" "blue" "taxi" "waypoint" "french" "german"
-5
+2
 
 BUTTON
 176
