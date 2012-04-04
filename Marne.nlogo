@@ -125,6 +125,8 @@ to clear
   set-default-shape frontline_arrows "arrow"
   set unit-size 5
   set last-placed-waypoint 0
+  
+  setup-patches
 
   netsend:send "reset" 0
 
@@ -140,7 +142,7 @@ to setup-patches
     ask patches [ set pcolor 38 ]
     set background abs (background - 1)
     ifelse background = 1 [
-      import-drawing "background.jpg"
+      import-drawing "background.png"
     ][
       ask patches [
       ]
