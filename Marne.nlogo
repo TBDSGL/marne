@@ -402,21 +402,23 @@ end
 ;; Referee with ref the encounters
 ;;**
 to go-referee
-  let french_strength random ([soldiers] of french)
-  let german_strength random ([soldiers] of german)
-  
-  if (french_strength > german_strength) 
+  if (french != 0 and german != 0)
   [
-    ask french [set-soldiers (([soldiers] of ([french] of myself)) - 0)]
-    ask german [set-soldiers (([soldiers] of ([german] of myself)) - .5)]
+    let french_strength random ([soldiers] of french)
+    let german_strength random ([soldiers] of german)
+    
+    if (french_strength > german_strength) 
+    [
+      ask french [set-soldiers (([soldiers] of ([french] of myself)) - 0)]
+      ask german [set-soldiers (([soldiers] of ([german] of myself)) - .5)]
+    ]
+    
+    if (french_strength < german_strength) 
+    [
+      ask french [set-soldiers (([soldiers] of ([french] of myself)) - .5)]
+      ask german [set-soldiers (([soldiers] of ([german] of myself)) - 0)]
+    ]
   ]
-
-  if (french_strength < german_strength) 
-  [
-    ask french [set-soldiers (([soldiers] of ([french] of myself)) - .5)]
-    ask german [set-soldiers (([soldiers] of ([german] of myself)) - 0)]
-  ]
-  
   
 end
 
@@ -483,7 +485,7 @@ to setup-frontline
   set loopNo 0
   while [loopNo < 9]
   [
-    ask turtle (first_id + loopNo) [ create-turtleLink-with turtle (first_id + loopNo + 1) ]
+    ask turtle (first_id + loopNo) [ create-turtle-link-with turtle (first_id + loopNo + 1) ]
     set loopNo (loopNo + 1)
   ]
   
@@ -794,7 +796,7 @@ CHOOSER
 type-to-add
 type-to-add
 "red" "blue" "taxi" "waypoint" "french" "german"
-4
+2
 
 BUTTON
 176
