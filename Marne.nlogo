@@ -107,6 +107,8 @@ waypoints-own [
 units-own [
   id
   soldiers
+  weight
+  next-waypoints
 ]
 
 to test
@@ -277,7 +279,7 @@ to add-unit
         set next-waypoints []
         set weight random 5
         set shape "circle"
-        set color red
+        set color sky
       ]
     ]
     
@@ -289,6 +291,8 @@ to add-unit
         set shape "square"
         set color red
         set soldiers 100
+        set weight random 5
+        set next-waypoints []
         set size 5
       ]
     ]
@@ -578,27 +582,29 @@ to associate-waypoints
   
   if (mouse-down? = false and mouse-click = 1 and any? waypoints) [
     
-    let closest-waypoint first sort-by [ [distancexy mouse-xcor mouse-ycor] of ?1 < [distancexy mouse-xcor mouse-ycor] of ?2 ] waypoints
+    let closest-waypoint first sort-by [ [distancexy mouse-xcor mouse-ycor] of ?1 < [distancexy mouse-xcor mouse-ycor] of ?2 ] (sentence sort waypoints sort units)
     ask association-root [ set next-waypoints lput ( list ([id] of closest-waypoint) (path-type) ) next-waypoints ]
     
     ;change properties of link depending on type of trail being traveled on
     if (path-type = "rail")
     [
       ask association-root [ create-waypoint-link-to closest-waypoint [
-          set color blue 
+          set color magenta 
           set thickness .1
           set shape "rail"] ]
     ]
     if (path-type = "road")
     [
       ask association-root [ create-waypoint-link-to closest-waypoint [
-          set color brown
+          set color magenta
           set thickness .1
           set shape "road"] ]
     ]
     if (path-type = "footpath")
     [
-      ask association-root [ create-waypoint-link-to closest-waypoint [set color grey] ]
+      ask association-root [ create-waypoint-link-to closest-waypoint [
+          set color magenta
+          set thickness .2] ]
     ]
     
     set mouse-click 0
@@ -607,7 +613,7 @@ end
 
 
 to-report get-waypoint-by-id [search-id]
-  report first sort waypoints with [id = search-id]
+  report first sentence (sort waypoints with [id = search-id]) (sort units with [id = search-id])
   
 end
 @#$#@#$#@
@@ -714,7 +720,7 @@ CHOOSER
 type-to-add
 type-to-add
 "red" "blue" "taxi" "waypoint" "unit"
-3
+2
 
 BUTTON
 176
@@ -848,7 +854,7 @@ CHOOSER
 path-type
 path-type
 "rail" "road" "footpath"
-2
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
