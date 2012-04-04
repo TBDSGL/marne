@@ -51,6 +51,7 @@ frontline_arrows-own [
 referees-own [
  french
  german
+ referee_neighbors
 ]
 
 taxis-own [
@@ -379,7 +380,7 @@ end
 to setup-referee
   let start_y 26
   let loopNo 0
-  ;;create 10 arrows
+  ;;create 10 referees
   while [loopNo < 9] [
     create-referees 1 [
     set color black
@@ -387,6 +388,8 @@ to setup-referee
     set size .5
     set xcor 10
     set ycor start_y
+    set referee_neighbors other frontline_arrows in-radius 5
+    
     ]
   set loopNo (loopNo + 1)
   set start_y (start_y - 4)
@@ -396,6 +399,7 @@ end
 to reset-all-units
   ask units [set soldiers 100]
   ask frontline_arrows [set xcor 10]
+  ask referees [set referee_neighbors (other frontline_arrows in-radius 5)]
 end
 
 ;;**
@@ -411,12 +415,14 @@ to go-referee
     [
       ask french [set-soldiers (([soldiers] of ([french] of myself)) - 0)]
       ask german [set-soldiers (([soldiers] of ([german] of myself)) - .5)]
+      ask referee_neighbors [set-frontline_arrow-direction 1 ]
     ]
     
     if (french_strength < german_strength) 
     [
       ask french [set-soldiers (([soldiers] of ([french] of myself)) - .5)]
       ask german [set-soldiers (([soldiers] of ([german] of myself)) - 0)]
+      ask referee_neighbors [set-frontline_arrow-direction -1 ]
     ]
   ]
   
@@ -495,7 +501,7 @@ end
 ;; Runs the frontline arrows and moves them accordingly
 ;;**
 to go-frontline_arrow 
-  if (direction = "red")
+  if (direction = 1)
   [
     set xcor (xcor + .1)
     set color red
@@ -504,7 +510,7 @@ to go-frontline_arrow
     ;;set pen-size 3
     ;;pen-erase
   ]
-  if (direction = "blue")
+  if (direction = -1)
   [
     set xcor (xcor - .1)
     set color blue
@@ -529,11 +535,11 @@ to set-frontline_arrow-direction [myDirection]
   
   if (direction > 0)
   [
-    set direction "blue"
+    set direction 1 ;blue is positive
   ]
   if (direction < 0)
   [
-    set direction "red"
+    set direction -1 ;red is negative
   ]
 end
 
@@ -796,7 +802,7 @@ CHOOSER
 type-to-add
 type-to-add
 "red" "blue" "taxi" "waypoint" "french" "german"
-2
+4
 
 BUTTON
 176
