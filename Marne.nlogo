@@ -365,6 +365,11 @@ to setup-blue-form
   file-close
 end
 
+to set-soldiers [newSoliderNo]
+  set soldiers newSoliderNo
+  set size soldiers / 10
+end
+
 ;;;;;;;;;; REFEREES ;;;;;;;;;;
 
 ;;**
@@ -387,6 +392,11 @@ to setup-referee
   ]
 end
 
+to reset-all-units
+  ask units [set soldiers 100]
+  ask frontline_arrows [set xcor 10]
+  plot-pen-reset
+end
 
 to go-referee
   let french_strength random ([soldiers] of french)
@@ -394,14 +404,14 @@ to go-referee
   
   if (french_strength > german_strength) 
   [
-    ask french [set soldiers ([soldiers] of french - 1)]
-    ask german [set soldiers ([soldiers] of german - 2)]
+    ask french [set-soldiers (([soldiers] of ([french] of myself)) - 0)]
+    ask german [set-soldiers (([soldiers] of ([german] of myself)) - .5)]
   ]
 
   if (french_strength < german_strength) 
   [
-    ask french [set soldiers ([soldiers] of french - 2)]
-    ask german [set soldiers ([soldiers] of german - 1)]
+    ask french [set-soldiers (([soldiers] of ([french] of myself)) - .5)]
+    ask german [set-soldiers (([soldiers] of ([german] of myself)) - 0)]
   ]
 end
 
@@ -428,6 +438,7 @@ to associate-referees
     
     set mouse-click 0
   ]
+
 end
 ;;;;;;;;;; FRONTLINE ARROWS ;;;;;;;;;;;;;
 ;;** 
@@ -517,8 +528,6 @@ end
 
 ;;;;;;;;;; TAXIS ;;;;;;;;;;;;;
 to go-transport
-  
-  
   
   ;get "next waypoint"
   ;determine which of the next waypoints which will be inside method "next waypoint"
@@ -675,9 +684,9 @@ end
 @#$#@#$#@
 GRAPHICS-WINDOW
 384
-16
+15
 1577
-840
+839
 45
 30
 13.0
@@ -776,7 +785,7 @@ CHOOSER
 type-to-add
 type-to-add
 "red" "blue" "taxi" "waypoint" "french" "german"
-4
+5
 
 BUTTON
 176
@@ -920,6 +929,23 @@ BUTTON
 NIL
 associate-referees
 T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+40
+597
+159
+630
+NIL
+reset-all-units
+NIL
 1
 T
 OBSERVER
