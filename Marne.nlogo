@@ -286,13 +286,29 @@ to add-unit
       ]
     ]
     
-    if type-to-add = "unit" [
+    if type-to-add = "french" [
       create-units 1 [
         set xcor mouse-xcor
         set ycor mouse-ycor
         set id random 10000000
         set shape "square"
         set color red
+        set soldiers 100
+        set team "french"
+        set weight random 5
+        set next-waypoints []
+        set size 5
+      ]
+    ]
+    
+    if type-to-add = "german" [
+      create-units 1 [
+        set xcor mouse-xcor
+        set ycor mouse-ycor
+        set id random 10000000
+        set shape "square"
+        set color blue
+        set team "german"
         set soldiers 100
         set weight random 5
         set next-waypoints []
@@ -355,19 +371,19 @@ end
 ;; Sets up the referees
 ;;**
 to setup-referee
-  let start_y 19
+  let start_y 26
   let loopNo 0
   ;;create 10 arrows
-  while [loopNo < 10] [
+  while [loopNo < 9] [
     create-referees 1 [
-    set color white
+    set color black
     set shape "circle"
     set size .5
     set xcor 10
     set ycor start_y
     ]
   set loopNo (loopNo + 1)
-  set start_y (start_y - 2)
+  set start_y (start_y - 4)
   ]
 end
 
@@ -405,7 +421,7 @@ to associate-referees
     [
       ask association-root-referee [ set french closest-unit ]
     ]
-    if ([team] of closest-unit = "french")
+    if ([team] of closest-unit = "german")
     [
       ask association-root-referee [ set german closest-unit ]
     ]
@@ -418,7 +434,7 @@ end
 ;; Sets up the front line
 ;;**
 to setup-frontline
-  let start_y 20
+  let start_y 28
   let loopNo 0
   ;;create 10 arrows
   while [loopNo < 10] [
@@ -429,7 +445,7 @@ to setup-frontline
     set ycor start_y
     ]
   set loopNo (loopNo + 1)
-  set start_y (start_y - 2)
+  set start_y (start_y - 4)
   ]
   
   ;;gets the first ID of the arrows to set up links
@@ -759,8 +775,8 @@ CHOOSER
 177
 type-to-add
 type-to-add
-"red" "blue" "taxi" "waypoint" "unit"
-2
+"red" "blue" "taxi" "waypoint" "french" "german"
+4
 
 BUTTON
 176
@@ -808,9 +824,9 @@ path-number
 Number
 
 BUTTON
-187
+188
 215
-304
+305
 248
 NIL
 add-waypoint
@@ -825,9 +841,9 @@ NIL
 1
 
 BUTTON
-183
+184
 292
-337
+338
 325
 NIL
 reset-last-waypoint
@@ -894,6 +910,23 @@ CHOOSER
 path-type
 path-type
 "rail" "road" "footpath"
+1
+
+BUTTON
+218
+458
+369
+491
+NIL
+associate-referees
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
 1
 
 @#$#@#$#@
