@@ -166,6 +166,7 @@ to go
   ask waypoints [ set label get-waypoint-weight self ]
   ask referees [ go-referee ]
   ask frontline_arrows [ go-frontline_arrow ]
+  ask units [ if (team = "german" and ticks mod 25 = 0) [set-soldiers soldiers + 1 ]]
 end
 
 
@@ -297,11 +298,10 @@ to add-unit
         set id random 10000000
         set shape "square"
         set color red
-        set-soldiers 100
+        set-soldiers 1000
         set team "french"
         ;set weight random 5
         set next-waypoints []
-        set size 5
       ]
     ]
     
@@ -313,10 +313,9 @@ to add-unit
         set shape "square"
         set color blue
         set team "german"
-        set-soldiers 100
+        set-soldiers 1000
         ;set weight random 5
         set next-waypoints []
-        set size 5
       ]
     ]
     
@@ -372,7 +371,7 @@ end
 to set-soldiers [newSoliderNo]
   set soldiers newSoliderNo
   set weight soldiers
-  set size soldiers / 10
+  set size soldiers / 400
 end
 
 ;;;;;;;;;; REFEREES ;;;;;;;;;;
@@ -400,7 +399,7 @@ to setup-referee
 end
 
 to reset-all-units
-  ask units [set soldiers 100]
+  ask units [set-soldiers 1000]
   ask frontline_arrows [set xcor 10]
   ask referees [set referee_neighbors (other frontline_arrows in-radius 5)]
 end
@@ -414,17 +413,22 @@ to go-referee
     let french_strength random ([soldiers] of french)
     let german_strength random ([soldiers] of german)
     
+    if (french_strength > 0 and german_strength > 0) [
+      ask french [set-soldiers (soldiers - (1 * french_strength / (french_strength + german_strength)))]
+      ask german [set-soldiers (soldiers - (1 * german_strength / (french_strength + german_strength)))]
+    ]
+    
     if (french_strength > german_strength) 
     [
-      ask french [set-soldiers (([soldiers] of ([french] of myself)) - 0)]
-      ask german [set-soldiers (([soldiers] of ([german] of myself)) - .5)]
+      ;ask french [set-soldiers (([soldiers] of ([french] of myself)) - 0)]
+      ;ask german [set-soldiers (([soldiers] of ([german] of myself)) - .5)]
       ask referee_neighbors [set-frontline_arrow-direction 1 ]
     ]
     
     if (french_strength < german_strength) 
     [
-      ask french [set-soldiers (([soldiers] of ([french] of myself)) - .5)]
-      ask german [set-soldiers (([soldiers] of ([german] of myself)) - 0)]
+      ;ask french [set-soldiers (([soldiers] of ([french] of myself)) - .5)]
+      ;ask german [set-soldiers (([soldiers] of ([german] of myself)) - 0)]
       ask referee_neighbors [set-frontline_arrow-direction -1 ]
     ]
   ]
