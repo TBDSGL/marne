@@ -24,6 +24,7 @@ breed [ trains train ]
 breed [ walkers walker ]
 
 breed [ waypoints waypoint ]
+breed [ units unit ]
 
 breed [ frontline_arrows frontline_arrow]
 
@@ -94,6 +95,11 @@ waypoints-own [
   id
   next-waypoints
   weight
+]
+
+units-own [
+  id
+  soldiers
 ]
 
 to test
@@ -262,6 +268,18 @@ to add-unit
         set weight random 5
         set shape "circle"
         set color red
+      ]
+    ]
+    
+    if type-to-add = "unit" [
+      create-units 1 [
+        set xcor mouse-xcor
+        set ycor mouse-ycor
+        set id random 10000000
+        set shape "square"
+        set color red
+        set soldiers 100
+        set size 5
       ]
     ]
     
@@ -654,7 +672,7 @@ CHOOSER
 177
 type-to-add
 type-to-add
-"red" "blue" "taxi" "waypoint"
+"red" "blue" "taxi" "waypoint" "unit"
 3
 
 BUTTON
