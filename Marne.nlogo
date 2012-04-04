@@ -7,6 +7,7 @@ globals [
   unit-size
   ;last-placed-waypoint
   association-root
+  association-root-referee
 ]
 
 directed-link-breed [ waypoint-links waypoint-link ]
@@ -109,6 +110,7 @@ units-own [
   soldiers
   weight
   next-waypoints
+  team
 ]
 
 to test
@@ -159,8 +161,9 @@ to go
   ;;ask reds [fd 1 rt random 90 lt random 90]
   ;;ask blues [fd 1 rt random 90 lt random 90]
   ask transports [ go-transport ]
-  ask frontline_arrows [ go-frontline_arrow ]
   ask waypoints [ set label get-waypoint-weight self ]
+  ask referees [ go-referee ]
+  ask frontline_arrows [ go-frontline_arrow ]
 end
 
 
@@ -346,10 +349,6 @@ to setup-blue-form
   file-close
 end
 
-to go-referee
-  
-end
-
 ;;;;;;;;;; REFEREES ;;;;;;;;;;
 
 ;;**
@@ -360,7 +359,7 @@ to setup-referee
   let loopNo 0
   ;;create 10 arrows
   while [loopNo < 10] [
-    create-frontline_arrows 1 [
+    create-referees 1 [
     set color white
     set shape "circle"
     set size .5
@@ -370,9 +369,50 @@ to setup-referee
   set loopNo (loopNo + 1)
   set start_y (start_y - 2)
   ]
-  
 end
 
+
+to go-referee
+  let french_strength random ([soldiers] of french)
+  let german_strength random ([soldiers] of german)
+  
+  if (french_strength > german_strength) 
+  [
+    ask french [set soldiers ([soldiers] of french - 1)]
+    ask german [set soldiers ([soldiers] of german - 2)]
+  ]
+
+  if (french_strength < german_strength) 
+  [
+    ask french [set soldiers ([soldiers] of french - 2)]
+    ask german [set soldiers ([soldiers] of german - 1)]
+  ]
+end
+
+;; Sets assocation between referees to a unit (click referee first, then unit)
+to associate-referees
+  if mouse-down? and (mouse-click = 0) and (any? referees) [
+    let closest-referee first sort-by [ [distancexy mouse-xcor mouse-ycor] of ?1 < [distancexy mouse-xcor mouse-ycor] of ?2 ] referees
+    set association-root-referee closest-referee
+    print "setting association-root"
+    set mouse-click 1
+  ]
+  
+  if (mouse-down? = false and mouse-click = 1 and any? units) [
+    
+    let closest-unit first sort-by [ [distancexy mouse-xcor mouse-ycor] of ?1 < [distancexy mouse-xcor mouse-ycor] of ?2 ] units
+    if ([team] of closest-unit = "french")
+    [
+      ask association-root-referee [ set french closest-unit ]
+    ]
+    if ([team] of closest-unit = "french")
+    [
+      ask association-root-referee [ set german closest-unit ]
+    ]
+    
+    set mouse-click 0
+  ]
+end
 ;;;;;;;;;; FRONTLINE ARROWS ;;;;;;;;;;;;;
 ;;** 
 ;; Sets up the front line
