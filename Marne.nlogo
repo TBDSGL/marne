@@ -26,7 +26,9 @@ breed [ walkers walker ]
 breed [ waypoints waypoint ]
 breed [ units unit ]
 
+;front line/battle breeds
 breed [ frontline_arrows frontline_arrow]
+breed [ referees referee ]
 
 ;;DEFINE REDS (Germans);;
 reds-own [
@@ -42,6 +44,11 @@ blues-own [
 
 frontline_arrows-own [
  direction 
+]
+
+referees-own [
+ french
+ german
 ]
 
 taxis-own [
@@ -168,6 +175,7 @@ to load-form
   ;;setup-red-form
   ;;setup-blue-form
   setup-frontline
+  setup-referee
   
   reset-ticks
 end
@@ -332,8 +340,34 @@ to setup-blue-form
   file-close
 end
 
-;;;;;;;;;; FRONTLINE ARROWS ;;;;;;;;;;;;;
+to go-referee
+  
+end
 
+;;;;;;;;;; REFEREES ;;;;;;;;;;
+
+;;**
+;; Sets up the referees
+;;**
+to setup-referee
+  let start_y 19
+  let loopNo 0
+  ;;create 10 arrows
+  while [loopNo < 10] [
+    create-frontline_arrows 1 [
+    set color white
+    set shape "circle"
+    set size .5
+    set xcor 10
+    set ycor start_y
+    ]
+  set loopNo (loopNo + 1)
+  set start_y (start_y - 2)
+  ]
+  
+end
+
+;;;;;;;;;; FRONTLINE ARROWS ;;;;;;;;;;;;;
 ;;** 
 ;; Sets up the front line
 ;;**
@@ -352,6 +386,7 @@ to setup-frontline
   set start_y (start_y - 2)
   ]
   
+  ;;gets the first ID of the arrows to set up links
   set loopNo 0
   let first_id 150
   while [loopNo < (count turtles)] [
@@ -366,6 +401,7 @@ to setup-frontline
   
   show first_id
   
+  ;;set up links between the front line arrows
   set loopNo 0
   while [loopNo < 9]
   [
@@ -375,6 +411,9 @@ to setup-frontline
   
 end
 
+;;**
+;; Runs the frontline arrows and moves them accordingly
+;;**
 to go-frontline_arrow 
   ifelse (direction = "red")
   [
