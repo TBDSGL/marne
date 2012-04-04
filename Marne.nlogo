@@ -11,6 +11,7 @@ globals [
 ]
 
 directed-link-breed [ waypoint-links waypoint-link ]
+undirected-link-breed [ turtle-links turtle-link ]
 
 breed [ reds red-unit ]
 breed [ blues blue-unit ]
@@ -395,9 +396,11 @@ end
 to reset-all-units
   ask units [set soldiers 100]
   ask frontline_arrows [set xcor 10]
-  plot-pen-reset
 end
 
+;;**
+;; Referee with ref the encounters
+;;**
 to go-referee
   let french_strength random ([soldiers] of french)
   let german_strength random ([soldiers] of german)
@@ -413,6 +416,8 @@ to go-referee
     ask french [set-soldiers (([soldiers] of ([french] of myself)) - .5)]
     ask german [set-soldiers (([soldiers] of ([german] of myself)) - 0)]
   ]
+  
+  
 end
 
 ;; Sets assocation between referees to a unit (click referee first, then unit)
@@ -478,7 +483,7 @@ to setup-frontline
   set loopNo 0
   while [loopNo < 9]
   [
-    ask turtle (first_id + loopNo) [ create-link-with turtle (first_id + loopNo + 1) ]
+    ask turtle (first_id + loopNo) [ create-turtleLink-with turtle (first_id + loopNo + 1) ]
     set loopNo (loopNo + 1)
   ]
   
@@ -488,7 +493,7 @@ end
 ;; Runs the frontline arrows and moves them accordingly
 ;;**
 to go-frontline_arrow 
-  ifelse (direction = "red")
+  if (direction = "red")
   [
     set xcor (xcor + .1)
     set color red
@@ -497,6 +502,7 @@ to go-frontline_arrow
     ;;set pen-size 3
     ;;pen-erase
   ]
+  if (direction = "blue")
   [
     set xcor (xcor - .1)
     set color blue
@@ -514,16 +520,19 @@ to go-frontline_arrow
     pd
     set color blue
   ]
+end
 
-
-  ifelse (random 6 <= 2)
+to set-frontline_arrow-direction [myDirection]
+  set direction direction + myDirection
+  
+  if (direction > 0)
   [
     set direction "blue"
   ]
+  if (direction < 0)
   [
     set direction "red"
   ]
-
 end
 
 ;;;;;;;;;; TAXIS ;;;;;;;;;;;;;
@@ -785,7 +794,7 @@ CHOOSER
 type-to-add
 type-to-add
 "red" "blue" "taxi" "waypoint" "french" "german"
-5
+4
 
 BUTTON
 176
