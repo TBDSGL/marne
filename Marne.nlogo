@@ -169,11 +169,7 @@ to go
   ask units [ if (team = "german" and ticks mod 25 = 0) [set-soldiers soldiers + 1 ]]
 end
 
-
-;;**
-;; Loads the data
-;;**
-to load-form
+to setup
   ;setup-patches
   ;setup-carth-form
   ;setup-rome-form
@@ -191,32 +187,40 @@ to load-form
 end
 
 ;;**
+;; Loads the data
+;;**
+to load-form
+  import-world "savefile"
+end
+
+;;**
 ;; Saves the data
 ;;**
 to save-form
+  export-world "savefile"
   ;;save the red team coordinates
-  carefully [ file-delete "red.txt" ][ write "File Not Deleted" ]
-  file-open "red.txt"
-  file-write ( count reds )
+  ;carefully [ file-delete "red.txt" ][ write "File Not Deleted" ]
+  ;file-open "red.txt"
+  ;file-write ( count reds )
 
-  ask reds [
-      file-write xcor
-      file-write ycor
-    ]
-  
-  file-close
+  ;ask reds [
+  ;    file-write xcor
+  ;    file-write ycor
+  ;  ]
+  ;
+  ;file-close
   
   ;;save the blue team coordinates
-  carefully [ file-delete "blue.txt" ][ write "File Not Deleted" ]
-  file-open "blue.txt"
-  file-write ( count blues )
+  ;carefully [ file-delete "blue.txt" ][ write "File Not Deleted" ]
+  ;file-open "blue.txt"
+  ;file-write ( count blues )
 
-  ask blues [
-      file-write xcor
-      file-write ycor
-    ]
+  ;ask blues [
+  ;    file-write xcor
+  ;    file-write ycor
+  ;  ]
   
-  file-close
+  ;file-close
   
 end
 
@@ -738,10 +742,10 @@ ticks
 30.0
 
 BUTTON
-20
-82
-83
-115
+292
+70
+355
+103
 Save
 save-form
 NIL
@@ -789,10 +793,10 @@ NIL
 1
 
 BUTTON
-104
-81
-168
-114
+292
+28
+356
+61
 Load
 load-form
 NIL
@@ -833,10 +837,10 @@ NIL
 1
 
 BUTTON
-215
-28
-318
-61
+211
+405
+314
+438
 Toggle Map
 setup-patches
 NIL
@@ -973,6 +977,23 @@ BUTTON
 630
 NIL
 reset-all-units
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+100
+73
+169
+106
+Setup
+setup
 NIL
 1
 T
