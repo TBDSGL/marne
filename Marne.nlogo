@@ -406,6 +406,8 @@ to reset-all-units
   ask units [set-soldiers 1000]
   ask frontline_arrows [set xcor 10]
   ask referees [set referee_neighbors (other frontline_arrows in-radius 5)]
+  setup-patches
+  reset-ticks
 end
 
 ;;**
@@ -904,7 +906,7 @@ INPUTBOX
 167
 338
 last-placed-waypoint
-0
+1
 1
 0
 Number
