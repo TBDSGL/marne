@@ -27,6 +27,7 @@ breed [ walkers walker ]
 
 breed [ waypoints waypoint ]
 breed [ units unit ]
+breed [ transport-spawners transport-spawner ]
 
 ;front line/battle breeds
 breed [ frontline_arrows frontline_arrow]
@@ -88,6 +89,12 @@ transports-own [
   current-waypoint
   capacity
   current-units
+]
+
+transport-spawners-own [
+  type-to-spawn
+  number-to-spawn
+  ticks-to-next-spawn
 ]
 
 taxi-waypoints-own [
@@ -167,6 +174,7 @@ to go
   ask referees [ go-referee ]
   ask frontline_arrows [ go-frontline_arrow ]
   ask units [ if (team = "german" and ticks mod 25 = 0) [set-soldiers soldiers + 1 ]]
+  ask transport-spawners [ go-transport-spawner]
 end
 
 to setup
@@ -320,6 +328,17 @@ to add-unit
         set-soldiers 1000
         ;set weight random 5
         set next-waypoints []
+      ]
+    ]
+    
+    if type-to-add = "taxi spawner" [
+      create-transport-spawners 1 [
+        set xcor mouse-xcor
+        set ycor mouse-ycor
+        ;set shape "square"
+        set color blue
+        set type-to-spawn "taxi"
+        set number-to-spawn max-taxis
       ]
     ]
     
@@ -715,6 +734,49 @@ to-report get-waypoint-by-id [search-id]
   report first sentence (sort waypoints with [id = search-id]) (sort units with [id = search-id])
   
 end
+
+
+to go-transport-spawner
+  set ticks-to-next-spawn (ticks-to-next-spawn - 1)
+  if (ticks-to-next-spawn <= 0 and number-to-spawn > 0) [
+    let spawning 1
+    if (spawn-sequentially = false) [
+      set spawning number-to-spawn
+    ]
+    
+    set number-to-spawn (number-to-spawn - spawning)
+    
+    if (type-to-spawn = "taxi") [
+      hatch-transports spawning [
+        ;set xcor [xcor] of myself
+        ;set ycor [ycor] of myself
+        ;set path path-number
+        set current-waypoint 0
+        set size 3
+        set transport-type "taxi"
+        set current-units random 20
+        
+        ;change shape of the transport depending on what kind of transport is being modeled
+        if (transport-type = "taxi")
+        [
+          set shape "car right"
+        ]
+        if (transport-type = "train")
+        [
+          set shape "train right"
+        ]
+        if (transport-type = "foot")
+        [
+          set shape "person"
+        ]
+      ]
+    ]
+    
+    set ticks-to-next-spawn 5
+    
+  ]
+end
+
 @#$#@#$#@
 GRAPHICS-WINDOW
 384
@@ -818,8 +880,8 @@ CHOOSER
 177
 type-to-add
 type-to-add
-"red" "blue" "taxi" "waypoint" "french" "german"
-2
+"red" "blue" "taxi" "waypoint" "french" "german" "taxi spawner"
+4
 
 BUTTON
 176
@@ -906,7 +968,7 @@ INPUTBOX
 167
 338
 last-placed-waypoint
-1
+0
 1
 0
 Number
@@ -1005,6 +1067,32 @@ NIL
 NIL
 NIL
 1
+
+SLIDER
+30
+666
+202
+699
+max-taxis
+max-taxis
+0
+100
+10
+1
+1
+taxis
+HORIZONTAL
+
+SWITCH
+182
+617
+359
+650
+spawn-sequentially
+spawn-sequentially
+0
+1
+-1000
 
 @#$#@#$#@
 ## WHAT IS IT?
