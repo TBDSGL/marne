@@ -110,6 +110,9 @@ waypoints-own [
 units-own [
   id
   soldiers
+  rof
+  hit_prob
+  ammo_per_soldier
   weight
   next-waypoints
   team
@@ -169,6 +172,9 @@ to go
   ask units [ if (team = "german" and ticks mod 25 = 0) [set-soldiers soldiers + 1 ]]
 end
 
+;;**
+;; Sets up the simulation to run
+;;**
 to setup
   ;setup-patches
   ;setup-carth-form
@@ -303,6 +309,8 @@ to add-unit
         set shape "square"
         set color red
         set-soldiers 1000
+        set rof 10
+        set hit_prob .5
         set team "french"
         ;set weight random 5
         set next-waypoints []
@@ -318,6 +326,8 @@ to add-unit
         set color blue
         set team "german"
         set-soldiers 1000
+        set rof 10
+        set hit_prob .5
         ;set weight random 5
         set next-waypoints []
       ]
@@ -403,10 +413,10 @@ to setup-referee
 end
 
 to reset-all-units
+  setup-patches
   ask units [set-soldiers 1000]
   ask frontline_arrows [set xcor 10]
   ask referees [set referee_neighbors (other frontline_arrows in-radius 5)]
-  setup-patches
   reset-ticks
 end
 
@@ -414,14 +424,21 @@ end
 ;; Referee with ref the encounters
 ;;**
 to go-referee
+  
+  let alpha .00001
+  let phi .00001
+  
   if (french != 0 and german != 0)
   [
-    let french_strength random ([soldiers] of french)
-    let german_strength random ([soldiers] of german)
+    let french_strength ([soldiers] of french) * ([rof] of french) * ([hit_prob] of french) * alpha
+    let german_strength ([soldiers] of german) * ([rof] of german) * ([hit_prob] of german) * phi
     
-    if (french_strength > 0 and german_strength > 0) [
-      ask french [set-soldiers (soldiers - (1 * french_strength / (french_strength + german_strength)))]
-      ask german [set-soldiers (soldiers - (1 * german_strength / (french_strength + german_strength)))]
+    if ([soldiers] of french > 0) [
+      ask german [set-soldiers (soldiers - french_strength)]
+    ]
+    
+    if ([soldiers] of german > 0) [
+      ask french [set-soldiers (soldiers - german_strength)]
     ]
     
     if (french_strength > german_strength) 
@@ -516,6 +533,10 @@ end
 to go-frontline_arrow 
   if (direction = 1)
   [
+    if (xcor < 45)
+    [
+      set xcor (xcor - .1)
+    ]
     set xcor (xcor + .1)
     set color red
     set heading 90
@@ -525,7 +546,10 @@ to go-frontline_arrow
   ]
   if (direction = -1)
   [
-    set xcor (xcor - .1)
+    if (xcor > 0)
+    [
+      set xcor (xcor - .1)
+    ]
     set color blue
     set heading 270
   ]
@@ -819,7 +843,7 @@ CHOOSER
 type-to-add
 type-to-add
 "red" "blue" "taxi" "waypoint" "french" "german"
-2
+5
 
 BUTTON
 176
@@ -906,7 +930,7 @@ INPUTBOX
 167
 338
 last-placed-waypoint
-1
+0
 1
 0
 Number
