@@ -16,14 +16,9 @@ undirected-link-breed [ turtle-links turtle-link ]
 breed [ reds red-unit ]
 breed [ blues blue-unit ]
 
-breed [ taxis taxi ]
 breed [ taxi-waypoints taxi-waypoint ]
 
 breed [ transports transport ]
-
-breed [ horses horse ]
-breed [ trains train ]
-breed [ walkers walker ]
 
 breed [ waypoints waypoint ]
 breed [ units unit ]
@@ -53,35 +48,6 @@ referees-own [
  french
  german
  referee_neighbors
-]
-
-taxis-own [
-  path
-  current-waypoint
-  capacity
-  current-units
-  myType
-]
-
-trains-own [
-  path
-  current-waypoint
-  capacity
-  current-units
-]
-
-horses-own [
-  path
-  current-waypoint
-  capacity
-  current-units
-]
-
-walkers-own [
-  path
-  current-waypoint
-  capacity
-  current-units
 ]
 
 transports-own [
@@ -142,7 +108,6 @@ to clear
   clear-all
   set-default-shape reds "arrow"
   set-default-shape blues "default"
-  set-default-shape taxis "default"
   set-default-shape taxi-waypoints "triangle"
   set-default-shape frontline_arrows "arrow"
   set unit-size 5
@@ -183,7 +148,9 @@ to go
   ask referees [ go-referee ]
   ask frontline_arrows [ go-frontline_arrow ]
   ask units [ if (team = "german") [go-german] if (team = "french") [go-french] ]
-  ask transport-spawners [ go-transport-spawner]
+  ask transport-spawners [ go-transport-spawner] 
+  ask waypoint-links [ handle-visible ] 
+  
 end
 
 ;;**
@@ -309,6 +276,7 @@ to add-unit
         set id random 10000000
         set size 1.5
         set next-waypoints []
+        set previous-waypoints []
         set weight 0
         set shape "circle"
         set color sky
@@ -364,6 +332,21 @@ to add-unit
 end
 
 ;;**
+;; Handles the visiblity of the elements
+;;**
+to handle-visible
+  ;;handle visilbity
+  if (shape = "rail")
+  [
+     set hidden? show-rails
+  ]
+  if (shape = "road")
+  [
+    set hidden? show-roads
+  ]
+end
+
+;;**
 ;; Sets up the red units
 ;;**
 to setup-red-form
@@ -413,7 +396,7 @@ to set-soldiers [newSoliderNo]
   set size soldiers / 400
 end
 
-;;;;;;;;;; REFEREES ;;;;;;;;;;
+;;;;;;;;;; REFEREES ;;;;;;;;;;;
 
 ;;**
 ;; Sets up the referees
@@ -859,7 +842,6 @@ end
 
 
 
-
 @#$#@#$#@
 GRAPHICS-WINDOW
 384
@@ -1174,6 +1156,28 @@ SWITCH
 spawn-sequentially
 spawn-sequentially
 0
+1
+-1000
+
+SWITCH
+210
+516
+341
+549
+show-roads
+show-roads
+1
+1
+-1000
+
+SWITCH
+212
+563
+333
+596
+show-rails
+show-rails
+1
 1
 -1000
 
