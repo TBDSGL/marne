@@ -107,11 +107,15 @@ taxi-waypoints-own [
 ; next-waypoints is a list of lists where
 ; 0th item is id of next waypoint
 ; 1st item is type of path to that waypoint
-; ex. [ [ 123 "road" ] [ 432 "rail" ] [ 980 "road" ] ]
+; 2nd item is need - 1 or 0
+; 3rd item is "last sent" - how many troops sent 
+; ex. [ [ 123 "road" 1 1 ] [ 432 "rail" 1 0 ] [ 980 "road" 0 0 ] ]
 waypoints-own [
   id
   next-waypoints
+  previous-waypoints
   weight
+  need
 ]
 
 units-own [
@@ -122,7 +126,9 @@ units-own [
   ammo_per_soldier
   weight
   next-waypoints
+  previous-waypoints
   team
+  need
 ]
 
 to test
@@ -176,7 +182,7 @@ to go
   ask waypoints [ set label get-waypoint-weight self ]
   ask referees [ go-referee ]
   ask frontline_arrows [ go-frontline_arrow ]
-  ask units [ if (team = "german" and ticks mod 25 = 0) [set-soldiers soldiers + 1 ]]
+  ask units [ if (team = "german") [go-german] if (team = "french") [go-french] ]
   ask transport-spawners [ go-transport-spawner]
 end
 
@@ -726,6 +732,7 @@ to associate-waypoints
     
     let closest-waypoint first sort-by [ [distancexy mouse-xcor mouse-ycor] of ?1 < [distancexy mouse-xcor mouse-ycor] of ?2 ] (sentence sort waypoints sort units)
     ask association-root [ set next-waypoints lput ( list ([id] of closest-waypoint) (path-type) ) next-waypoints ]
+    ask closest-waypoint [ set previous-waypoints lput ( [id] of association-root ) previous-waypoints ]
     
     ;change properties of link depending on type of trail being traveled on
     if (path-type = "rail")
@@ -800,6 +807,58 @@ to go-transport-spawner
     
   ]
 end
+
+
+
+to go-french
+  if (need = 0 and soldiers < 1000) [
+    ; send back need
+    set need 1
+    foreach previous-waypoints [
+      let previous-waypoint (get-waypoint-by-id [id] of ?)
+      ask previous-waypoint [set-need-for-id 1 id]
+    ]
+  ]
+  if (need = 1 and soldiers > 1000) [
+    set need 0
+    foreach previous-waypoints [
+      let previous-waypoint (get-waypoint-by-id [id] of ?)
+      ask previous-waypoint [ set-need-for-id 0 id ]
+    ]
+  ]
+end
+
+to go-german
+  if (ticks mod 25 = 0) [ set-soldiers soldiers + 1 ]
+end
+
+
+to set-need-for-id [new-need for-id]
+  let any-need 0
+  foreach next-waypoints [
+    if ( item 0 ? = for-id ) [
+      set next-waypoints replace-item 2 next-waypoints new-need
+    ]
+    if ([need] of ? = 1) [ set any-need 1 ]
+  ]
+  
+  if (any-need != need) [ set-my-need any-need ]
+  
+end
+
+to set-my-need [new-need]
+  foreach previous-waypoints [
+      let previous-waypoint (get-waypoint-by-id [id] of ?)
+      ask previous-waypoint [
+        set-need-for-id new-need id
+        ;set-my-need new-need
+      ]
+  ]
+end
+
+
+
+
 
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -905,7 +964,7 @@ CHOOSER
 type-to-add
 type-to-add
 "red" "blue" "taxi" "waypoint" "french" "german" "taxi spawner"
-4
+3
 
 BUTTON
 176
