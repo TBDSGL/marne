@@ -45,6 +45,7 @@ public class NetSend extends DefaultCommand implements Container {
     }
 
     NetSendPacket n = new NetSendPacket(context.getAgent().world().ticks(),
+		    Double.valueOf(context.getAgent().id()),
 		    args[0].getString(),
 		    args[1].getDoubleValue());
     packets.add(n);
