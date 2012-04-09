@@ -125,6 +125,7 @@
 		2CAA6F1215323A3C00EF300D /* MapLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 2CAA6F1115323A3C00EF300D /* MapLayer.m */; };
 		2CAA6F1415323ABE00EF300D /* background.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CAA6F1315323ABE00EF300D /* background.png */; };
 		2CAA6F1715323B8200EF300D /* NetSendPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 2CAA6F1615323B8200EF300D /* NetSendPacket.m */; };
+		2CAA6F1915326CE200EF300D /* button_question.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CAA6F1815326CE200EF300D /* button_question.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -368,6 +369,7 @@
 		2CAA6F1315323ABE00EF300D /* background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = background.png; path = Resources/background.png; sourceTree = "<group>"; };
 		2CAA6F1515323B8200EF300D /* NetSendPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetSendPacket.h; sourceTree = "<group>"; };
 		2CAA6F1615323B8200EF300D /* NetSendPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NetSendPacket.m; sourceTree = "<group>"; };
+		2CAA6F1815326CE200EF300D /* button_question.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = button_question.png; path = Resources/button_question.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -445,6 +447,7 @@
 		2CAA6DB0153239AD00EF300D /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				2CAA6F1815326CE200EF300D /* button_question.png */,
 				2CAA6F1315323ABE00EF300D /* background.png */,
 				2CAA6DB1153239AD00EF300D /* Default.png */,
 				2CAA6DB3153239AD00EF300D /* fps_images.png */,
@@ -831,6 +834,7 @@
 				2CAA6DC0153239AD00EF300D /* Icon@2x.png in Resources */,
 				2CAA6DC3153239AD00EF300D /* iTunesArtwork in Resources */,
 				2CAA6F1415323ABE00EF300D /* background.png in Resources */,
+				2CAA6F1915326CE200EF300D /* button_question.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

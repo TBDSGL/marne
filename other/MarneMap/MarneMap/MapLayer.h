@@ -10,21 +10,26 @@
 #import "cocos2d.h"
 #import "NetSendPacket.h"
 
+#define BACKGROUND_TAG 0
+
 @interface MapLayer : CCLayer {
     BOOL updating;
+    NSMutableArray *netPackets;
 }
 //@property (nonatomic) IBOutlet UITextView *textBox;
-@property (retain) NSMutableArray *netPackets;
+//@property (retain) NSMutableArray *netPackets;
 @property (retain) NSTimer *timer;
 //@property (nonatomic) IBOutlet UIScrollView *scrollView;
 @property (nonatomic, retain) IBOutlet UITextField *ipField;
 @property (retain) NSString *ipAddr;
+@property (retain) NSMutableDictionary *turtleCache;
 
 +(CCScene *) scene;
 
 - (IBAction)getData:(id)sender;
 - (IBAction)resetData:(id)sender;
-
+- (void)showTime:(double)tick;
+- (CCSprite*)getTurtle:(NSNumber*)id;
 
 
 @end

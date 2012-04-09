@@ -98,7 +98,8 @@ units-own [
 ]
 
 to test
-  netsend:send "bleh" random 10
+  ;ask turtles [netsend:send "bleh" random 10]
+  ask turtles [send-position]
 end
 
 ;;**
@@ -150,6 +151,8 @@ to go
   ask units [ if (team = "german") [go-german] if (team = "french") [go-french] ]
   ask transport-spawners [ go-transport-spawner] 
   ask waypoint-links [ handle-visible ] 
+  
+  if (ticks mod 10 = 0) [ask turtles [send-position]]
   
 end
 
@@ -296,6 +299,7 @@ to add-unit
         set team "french"
         ;set weight random 5
         set next-waypoints []
+        set previous-waypoints []
       ]
     ]
     
@@ -312,6 +316,7 @@ to add-unit
         set hit_prob .5
         ;set weight random 5
         set next-waypoints []
+        set previous-waypoints []
       ]
     ]
     
@@ -839,16 +844,18 @@ to set-my-need [new-need]
   ]
 end
 
-
-
+to send-position
+  netsend:send "x" (xcor / max-pxcor)
+  netsend:send "y" (ycor / max-pycor)
+end
 
 @#$#@#$#@
 GRAPHICS-WINDOW
 384
 15
-1577
+1291
 839
-45
+34
 30
 13.0
 1
@@ -860,8 +867,8 @@ GRAPHICS-WINDOW
 0
 0
 1
--45
-45
+-34
+34
 -30
 30
 0
@@ -946,7 +953,7 @@ CHOOSER
 type-to-add
 type-to-add
 "red" "blue" "taxi" "waypoint" "french" "german" "taxi spawner"
-3
+6
 
 BUTTON
 176
@@ -1142,7 +1149,7 @@ max-taxis
 max-taxis
 0
 100
-10
+48
 1
 1
 taxis

@@ -11,9 +11,10 @@
 @interface NetSendPacket : NSObject
 
 @property (retain) NSNumber *tick;
+@property (retain) NSNumber *turtleID;
 @property (retain) NSString *name;
 @property (retain) NSNumber *data;
 
-- (id)initWithTick:(NSNumber*)newTick name:(NSString*)newName data:(NSNumber*)newData;
+- (id)initWithTick:(NSNumber*)newTick turtleID:(NSNumber*)newID name:(NSString*)newName data:(NSNumber*)newData;
 
 @end

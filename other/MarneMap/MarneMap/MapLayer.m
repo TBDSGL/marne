@@ -12,8 +12,9 @@
 @implementation MapLayer
 //@synthesize scrollView;
 @synthesize ipField;
-@synthesize netPackets, timer;
+//@synthesize netPackets, timer;
 @synthesize ipAddr;
+@synthesize turtleCache;
 
 +(CCScene *) scene
 {
@@ -39,7 +40,8 @@
         // ask director the the window size
 		CGSize size = [[CCDirector sharedDirector] winSize];
         
-        self.netPackets = [NSMutableArray array];
+        netPackets = [[NSMutableArray array] retain];
+        self.turtleCache = [[NSMutableDictionary dictionary] retain];
         
         ipField = [[UITextField alloc] initWithFrame:
                    CGRectMake(10, 10, 300, 31)];
@@ -57,7 +59,7 @@
         
         CCSprite *background = [CCSprite spriteWithFile:@"background.png"];
         background.position = ccp(size.width / 2, size.height / 2);
-        [self addChild:background];
+        [self addChild:background z:-1 tag:BACKGROUND_TAG];
         
         updating = NO;
         //[self schedule:@selector(doGetData:)];
@@ -99,11 +101,11 @@
 
 
 -(void)startUpdate {
-    timer = [NSTimer scheduledTimerWithTimeInterval:0.1 
+    /*timer = [NSTimer scheduledTimerWithTimeInterval:0.1 
                                              target:self 
                                            selector:@selector(doGetData:) 
                                            userInfo:nil 
-                                            repeats:YES];
+                                            repeats:YES];*/
 }
 
 - (void)doGetData:(NSTimer*)theTimer {
@@ -125,23 +127,84 @@
     
     for (NSString *line in lines) {
         NSArray *items = [line componentsSeparatedByString:@"\t"];
-        if ([items count] == 3 && [@"ticks" isEqualToString:[items objectAtIndex:0]] == NO) {
+        if ([items count] == 4 && [@"ticks" isEqualToString:[items objectAtIndex:0]] == NO) {
             NSNumber *tick = [NSNumber numberWithDouble:[[items objectAtIndex:0] doubleValue]];
-            NSString *name = [items objectAtIndex:1];
-            NSNumber *data = [NSNumber numberWithDouble:[[items objectAtIndex:2] doubleValue]];
-            [netPackets addObject:[[NetSendPacket alloc] initWithTick:tick name:name data:data]];
+            NSNumber *turtleID = [NSNumber numberWithDouble:[[items objectAtIndex:1] doubleValue]];
+            NSString *name = [items objectAtIndex:2];
+            NSNumber *data = [NSNumber numberWithDouble:[[items objectAtIndex:3] doubleValue]];
+            [netPackets addObject:[[NetSendPacket alloc] initWithTick:tick turtleID:turtleID name:name data:data]];
         }
     }
     
     //textBox.text = [packets description];
     NSLog(@"new packets: %@", lines);
     
+    if ([netPackets count] > 0) {
+        
+        lastTick = [[netPackets lastObject] tick];
+        [self showTime:[lastTick doubleValue]];
+    }
+    
+    
     
 }
 - (IBAction)resetData:(id)sender {
     netPackets = [NSMutableArray array];
-    [timer invalidate];
-    timer = nil;
+    //[timer invalidate];
+    //timer = nil;
+}
+
+- (void)showTime:(double)tick
+{
+    int startIndex = [netPackets count]-1, endIndex = 0;
+    NSNumber *tickNumber = [NSNumber numberWithDouble:tick];
+    CCNode *background = [self getChildByTag:BACKGROUND_TAG];
+    /*for (int i = 0; i < [netPackets count]; i++) {
+        if ([[[netPackets objectAtIndex:i] tick] isEqualToNumber:tickNumber]) {
+            startIndex = i;
+            break;
+        }
+    }*/
+    while (startIndex > 0 && tick <= [[[netPackets objectAtIndex:startIndex] tick] doubleValue]) {
+        startIndex--;
+    }
+    while (endIndex < [netPackets count]-1 && tick >= [[[netPackets objectAtIndex:endIndex] tick] doubleValue]) {
+        endIndex++;
+    }
+    
+    for (int i = startIndex; i <= endIndex; i++) {
+        NetSendPacket *packet = [netPackets objectAtIndex:i];
+        if ([[packet name] isEqualToString:@"x"]) {
+            CCSprite *turtle = [self getTurtle:packet.turtleID];
+            float x = background.position.x + (background.boundingBox.size.width / 2) * [packet.data floatValue];
+            turtle.position = ccp(x, turtle.position.y);
+            CCLOG(@"Turtle pos: %f, %f", turtle.position.x, turtle.position.y);
+        }
+        if ([[packet name] isEqualToString:@"y"]) {
+            CCSprite *turtle = [self getTurtle:packet.turtleID];
+            // - (background.contentSize.height / 2)
+            float y = background.position.y + (background.boundingBox.size.height / 2) * [packet.data floatValue];
+            turtle.position = ccp(turtle.position.x, y);
+            CCLOG(@"Turtle pos:  %f, %f", turtle.position.x, turtle.position.y);
+        }
+        
+    }
+    
+}
+
+
+- (CCSprite*)getTurtle:(NSNumber*)turtleID
+{
+    CCLOG(@"Getting id: %@", turtleID);
+    CCSprite *turtle = [turtleCache objectForKey:turtleID];
+    if (turtle == nil) {
+        CCSprite *newTurtle = [CCSprite spriteWithFile:@"button_question.png"];
+        [turtleCache setObject:newTurtle forKey:turtleID];
+        [self addChild:newTurtle];
+        return newTurtle;
+    }
+    
+    return turtle;
 }
 
 

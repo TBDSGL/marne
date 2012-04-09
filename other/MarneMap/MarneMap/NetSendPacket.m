@@ -9,12 +9,13 @@
 #import "NetSendPacket.h"
 
 @implementation NetSendPacket
-@synthesize tick, name, data;
+@synthesize tick, turtleID, name, data;
 
-- (id)initWithTick:(NSNumber*)newTick name:(NSString*)newName data:(NSNumber*)newData
+- (id)initWithTick:(NSNumber*)newTick turtleID:(NSNumber*)newID name:(NSString*)newName data:(NSNumber*)newData
 {
     if (self = [super init]) {
         self.tick = newTick;
+        self.turtleID = newID;
         self.name = newName;
         self.data = newData;
     }
