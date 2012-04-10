@@ -143,8 +143,6 @@ end
 ;; Runs the simulation
 ;; **
 to go
-  set total-french 0
-  set total-german 0
   ;;ask reds [fd 1 rt random 90 lt random 90]
   ;;ask blues [fd 1 rt random 90 lt random 90]
   ask transports [ go-transport ]
@@ -177,6 +175,7 @@ to setup
   ;;setup-blue-form
   setup-frontline
   setup-referee
+  ask referees [calculate-totals]
   
   reset-ticks
 end
@@ -186,6 +185,7 @@ end
 ;;**
 to load-form
   import-world "savefile"
+  ask referees [calculate-totals]
 end
 
 ;;**
@@ -446,19 +446,22 @@ to go-referee
   let alpha .001
   let phi .001
   
-  if (french != 0 and german != 0)
-  [
+  if (french != 0 and german != 0) [
     let french_strength ([soldiers] of french) * ([rof] of french) * ([hit_prob] of french) * alpha
     let german_strength ([soldiers] of german) * ([rof] of german) * ([hit_prob] of german) * phi
     
     if ([soldiers] of french > 0) [
       ask german [set-soldiers (soldiers - french_strength)]
-      set total-french (total-french + [soldiers] of french)
+      if (total-german > 0) [
+        set total-german (total-german - french_strength)
+      ]
     ]
     
     if ([soldiers] of german > 0) [
       ask french [set-soldiers (soldiers - german_strength)]
-      set total-german (total-german + [soldiers] of german)
+      if (total-french > 0) [
+        set total-french (total-french - german_strength)
+      ]
     ]
     
     let french-str [soldiers] of french
@@ -493,6 +496,11 @@ to associate-referees
     set mouse-click 0
   ]
 
+end
+
+to calculate-totals
+  set total-french (total-french + [soldiers] of french)
+  set total-german (total-german + [soldiers] of german)
 end
 ;;;;;;;;;; FRONTLINE ARROWS ;;;;;;;;;;;;;
 ;;** 
@@ -1208,6 +1216,28 @@ false
 PENS
 "default" 1.0 0 -2674135 true "" "plot total-french"
 "pen-1" 1.0 0 -14730904 true "" "plot total-german"
+
+MONITOR
+1322
+256
+1401
+301
+NIL
+total-french
+17
+1
+11
+
+MONITOR
+1472
+257
+1557
+302
+NIL
+total-german
+17
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
