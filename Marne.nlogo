@@ -143,9 +143,9 @@ end
 ;; Runs the simulation
 ;; **
 to go
+  tick
   set total-french 0
   set total-german 0
-  tick
   ;;ask reds [fd 1 rt random 90 lt random 90]
   ;;ask blues [fd 1 rt random 90 lt random 90]
   ask transports [ go-transport ]
