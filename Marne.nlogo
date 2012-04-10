@@ -143,7 +143,6 @@ end
 ;; Runs the simulation
 ;; **
 to go
-  tick
   set total-french 0
   set total-german 0
   ;;ask reds [fd 1 rt random 90 lt random 90]
@@ -155,6 +154,8 @@ to go
   ask units [ if (team = "german") [go-german] if (team = "french") [go-french] ]
   ask transport-spawners [ go-transport-spawner] 
   ask waypoint-links [ handle-visible ] 
+  
+  tick
   
   if (ticks mod 10 = 0) [ask turtles [send-position]]
   
@@ -442,8 +443,8 @@ end
 ;;**
 to go-referee
   
-  let alpha .00001
-  let phi .00001
+  let alpha .001
+  let phi .001
   
   if (french != 0 and german != 0)
   [
@@ -452,30 +453,18 @@ to go-referee
     
     if ([soldiers] of french > 0) [
       ask german [set-soldiers (soldiers - french_strength)]
+      set total-french (total-french + [soldiers] of french)
     ]
     
     if ([soldiers] of german > 0) [
       ask french [set-soldiers (soldiers - german_strength)]
+      set total-german (total-german + [soldiers] of german)
     ]
     
-    set total-french (total-french + [soldiers] of french)
-    set total-german (total-german + [soldiers] of german)
-    
-    print [soldiers] of german
-    
-    if (french_strength > german_strength) 
-    [
-      ;ask french [set-soldiers (([soldiers] of ([french] of myself)) - 0)]
-      ;ask german [set-soldiers (([soldiers] of ([german] of myself)) - .5)]
-      ask referee_neighbors [set-frontline_arrow-direction 1 ]
-    ]
-    
-    if (french_strength < german_strength) 
-    [
-      ;ask french [set-soldiers (([soldiers] of ([french] of myself)) - .5)]
-      ;ask german [set-soldiers (([soldiers] of ([german] of myself)) - 0)]
-      ask referee_neighbors [set-frontline_arrow-direction -1 ]
-    ]
+    let french-str [soldiers] of french
+    let german-str [soldiers] of german
+    ask referee_neighbors [set-frontline_arrow-direction (french-str - german-str) / 1000 ]
+   
   ]
   
 end
@@ -553,35 +542,36 @@ end
 ;; Runs the frontline arrows and moves them accordingly
 ;;**
 to go-frontline_arrow 
-  if (direction = 1)
+  
+  if (direction > 0) ;;french winning
   [
-    if (xcor < 45)
+    if (xcor < 20 and xcor > 0)
     [
-      set xcor (xcor - .1)
+      forward direction
     ]
-    set xcor (xcor + .1)
     set color red
     set heading 90
     
     ;;set pen-size 3
     ;;pen-erase
   ]
-  if (direction = -1)
+  if (direction < 0) ;;germans winning
   [
-    if (xcor > 0)
+    if (xcor < 20 and xcor > 0)
     [
-      set xcor (xcor - .1)
+      forward -1 * direction
     ]
     set color blue
     set heading 270
   ]
   
-  ifelse (xcor > 10)
+  if (xcor > 10)
   [
     set pen-size 2
     pd
     set color red
   ]
+  if (xcor < 10)
   [
     set pen-size 2
     pd
@@ -590,16 +580,17 @@ to go-frontline_arrow
 end
 
 to set-frontline_arrow-direction [myDirection]
+  set direction 0
   set direction direction + myDirection
   
-  if (direction > 0)
-  [
-    set direction 1 ;blue is positive
-  ]
-  if (direction < 0)
-  [
-    set direction -1 ;red is negative
-  ]
+  ;if (direction > 0)
+  ;[
+  ;  set direction 1 ;blue is positive
+  ;]
+  ;if (direction < 0)
+  ;[
+  ;  set direction -1 ;red is negative
+  ;]
 end
 
 ;;;;;;;;;; TAXIS ;;;;;;;;;;;;;
@@ -823,6 +814,9 @@ to go-french
       ask previous-waypoint [ set-need-for-id 0 id ]
     ]
   ]
+  
+  ;;temp debug for reinforce
+  if (ticks mod 25 = 0) [ set-soldiers soldiers ]
 end
 
 to go-german
@@ -961,7 +955,7 @@ CHOOSER
 type-to-add
 type-to-add
 "red" "blue" "taxi" "waypoint" "french" "german" "taxi spawner"
-5
+4
 
 BUTTON
 176
