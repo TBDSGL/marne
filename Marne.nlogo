@@ -816,7 +816,7 @@ to go-french
   ]
   
   ;;temp debug for reinforce
-  if (ticks mod 25 = 0) [ set-soldiers soldiers ]
+  if (ticks mod 25 = 0) [ set-soldiers soldiers]
 end
 
 to go-german
@@ -955,7 +955,7 @@ CHOOSER
 type-to-add
 type-to-add
 "red" "blue" "taxi" "waypoint" "french" "german" "taxi spawner"
-4
+5
 
 BUTTON
 176
