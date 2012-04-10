@@ -146,7 +146,8 @@ to go
   ;;ask reds [fd 1 rt random 90 lt random 90]
   ;;ask blues [fd 1 rt random 90 lt random 90]
   ask transports [ go-transport ]
-  ask waypoints [ set label get-waypoint-weight self ]
+  ;ask waypoints [ set label get-waypoint-weight self ]
+  ask waypoints [ set label need ]
   ask referees [ go-referee ]
   ask frontline_arrows [ go-frontline_arrow ]
   ask units [ if (team = "german") [go-german] if (team = "french") [go-french] ]
@@ -657,7 +658,7 @@ end
 ;;**
 ;; Determine the next waypoint to go to
 ;;**
-to-report get-next-waypoint
+to-report get-next-waypoint-old
   ifelse length next-waypoints  = 0 [
     report 0
   ]
@@ -677,6 +678,42 @@ to-report get-next-waypoint
     ]
     
     report min-waypoint
+  ]
+end
+
+to-report get-next-waypoint
+  let index 0
+  ifelse length next-waypoints = 0 [
+    report 0
+  ]
+  [
+    let next-needed 0
+    ; if all waypoints have had something sent, reset sent value
+    let all-sent 1
+    foreach next-waypoints [
+      if (item 3 ? = 0) [ set all-sent 0 ]
+    ]
+    
+    if (all-sent = 1) [
+      set index 0
+      foreach next-waypoints [
+        set next-waypoints replace-item index next-waypoints (replace-item 3 (item index next-waypoints) 0)
+        set index (index + 1)
+      ]
+    ]
+    
+    set index 0
+    foreach next-waypoints [
+      ; if need, and hasn't been sent
+      if (item 2 ? = 1 and item 3 ? = 0) [
+        ; send on this path
+        report get-waypoint-by-id item 0 ?
+      ]
+      set index (index + 1)
+    ]
+    
+    ; If can't find a good waypoint, just choose a random one
+    report get-waypoint-by-id item 0 (item (random length next-waypoints) next-waypoints)
   ]
 end
 
@@ -727,7 +764,7 @@ to associate-waypoints
   if (mouse-down? = false and mouse-click = 1 and any? waypoints) [
     
     let closest-waypoint first sort-by [ [distancexy mouse-xcor mouse-ycor] of ?1 < [distancexy mouse-xcor mouse-ycor] of ?2 ] (sentence sort waypoints sort units)
-    ask association-root [ set next-waypoints lput ( list ([id] of closest-waypoint) (path-type) ) next-waypoints ]
+    ask association-root [ set next-waypoints lput ( list ([id] of closest-waypoint) (path-type) 0 0 ) next-waypoints ]
     ask closest-waypoint [ set previous-waypoints lput ( [id] of association-root ) previous-waypoints ]
     
     ;change properties of link depending on type of trail being traveled on
@@ -807,21 +844,16 @@ end
 
 
 to go-french
-  if (need = 0 and soldiers < 1000) [
+  if (need = 0 and soldiers < 900) [
     ; send back need
     set need 1
-    foreach previous-waypoints [
-      let previous-waypoint (get-waypoint-by-id [id] of ?)
-      ask previous-waypoint [set-need-for-id 1 id]
-    ]
+    set-my-need need
   ]
-  if (need = 1 and soldiers > 1000) [
+  if (need = 1 and soldiers > 900) [
     set need 0
-    foreach previous-waypoints [
-      let previous-waypoint (get-waypoint-by-id [id] of ?)
-      ask previous-waypoint [ set-need-for-id 0 id ]
-    ]
+    set-my-need need
   ]
+  set label need
   
   ;;temp debug for reinforce
   if (ticks mod 25 = 0) [ set-soldiers soldiers]
@@ -834,22 +866,33 @@ end
 
 to set-need-for-id [new-need for-id]
   let any-need 0
+  let index 0
   foreach next-waypoints [
     if ( item 0 ? = for-id ) [
-      set next-waypoints replace-item 2 next-waypoints new-need
+      print (item index next-waypoints)
+      print replace-item index next-waypoints (replace-item 2 (item index next-waypoints) new-need)
+      set next-waypoints replace-item index next-waypoints (replace-item 2 (item index next-waypoints) new-need)
     ]
-    if ([need] of ? = 1) [ set any-need 1 ]
+    
+    set index (index + 1)
   ]
+  
+  foreach next-waypoints [
+    print item 2 ?
+    if ((item 2 ?) = 1) [ set any-need 1 ]
+  ]
+  
   
   if (any-need != need) [ set-my-need any-need ]
   
 end
 
 to set-my-need [new-need]
+  set need new-need
   foreach previous-waypoints [
-      let previous-waypoint (get-waypoint-by-id [id] of ?)
+      let previous-waypoint (get-waypoint-by-id ?)
       ask previous-waypoint [
-        set-need-for-id new-need id
+        set-need-for-id new-need [id] of myself
         ;set-my-need new-need
       ]
   ]
@@ -963,7 +1006,7 @@ CHOOSER
 type-to-add
 type-to-add
 "red" "blue" "taxi" "waypoint" "french" "german" "taxi spawner"
-5
+6
 
 BUTTON
 176
