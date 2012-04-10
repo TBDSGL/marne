@@ -8,6 +8,8 @@ globals [
   ;last-placed-waypoint
   association-root
   association-root-referee
+  total-german
+  total-french
 ]
 
 directed-link-breed [ waypoint-links waypoint-link ]
@@ -141,6 +143,7 @@ end
 ;; Runs the simulation
 ;; **
 to go
+
   tick
   ;;ask reds [fd 1 rt random 90 lt random 90]
   ;;ask blues [fd 1 rt random 90 lt random 90]
@@ -453,6 +456,11 @@ to go-referee
     if ([soldiers] of german > 0) [
       ask french [set-soldiers (soldiers - german_strength)]
     ]
+    
+    set total-french (total-french + [soldiers] of french)
+    set total-german (total-german + [soldiers] of german)
+    
+    print [soldiers] of german
     
     if (french_strength > german_strength) 
     [
@@ -848,14 +856,13 @@ to send-position
   netsend:send "x" (xcor / max-pxcor)
   netsend:send "y" (ycor / max-pycor)
 end
-
 @#$#@#$#@
 GRAPHICS-WINDOW
 384
 15
-1291
+1577
 839
-34
+45
 30
 13.0
 1
@@ -867,8 +874,8 @@ GRAPHICS-WINDOW
 0
 0
 1
--34
-34
+-45
+45
 -30
 30
 0
@@ -953,7 +960,7 @@ CHOOSER
 type-to-add
 type-to-add
 "red" "blue" "taxi" "waypoint" "french" "german" "taxi spawner"
-6
+5
 
 BUTTON
 176
@@ -1149,7 +1156,7 @@ max-taxis
 max-taxis
 0
 100
-48
+10
 1
 1
 taxis
@@ -1187,6 +1194,25 @@ show-rails
 1
 1
 -1000
+
+PLOT
+1321
+22
+1557
+241
+plot 1
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"default" 1.0 0 -2674135 true "" "plot total-french"
+"pen-1" 1.0 0 -14730904 true "" "plot total-german"
 
 @#$#@#$#@
 ## WHAT IS IT?
