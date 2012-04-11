@@ -10,6 +10,8 @@ globals [
   association-root-referee
   total-german
   total-french
+  french-color
+  german-color
 ]
 
 directed-link-breed [ waypoint-links waypoint-link ]
@@ -175,6 +177,9 @@ to setup
   
   ;;setup-red-form
   ;;setup-blue-form
+  set french-color blue
+  set german-color red
+  
   setup-frontline
   setup-referee
   clear-plot
@@ -299,7 +304,7 @@ to add-unit
         set ycor mouse-ycor
         set id random 10000000
         set shape "square"
-        set color red
+        set color french-color
         set-soldiers 1000
         set rof 10
         set hit_prob .5
@@ -316,7 +321,7 @@ to add-unit
         set ycor mouse-ycor
         set id random 10000000
         set shape "square"
-        set color blue
+        set color german-color
         set team "german"
         set-soldiers 1000
         set rof 10
@@ -535,7 +540,7 @@ to setup-frontline
   ;;create 10 arrows
   while [loopNo < 10] [
     create-frontline_arrows 1 [
-    set color blue
+    set color german-color
     set heading 90 ;;0 is north, 90 is east, etc
     set xcor 10
     set ycor start_y
@@ -580,7 +585,7 @@ to go-frontline_arrow
     [
       forward direction
     ]
-    set color red
+    set color french-color
     set heading 90
     
     ;;set pen-size 3
@@ -592,7 +597,7 @@ to go-frontline_arrow
     [
       forward -1 * direction
     ]
-    set color blue
+    set color german-color
     set heading 270
   ]
   
@@ -600,13 +605,13 @@ to go-frontline_arrow
   [
     set pen-size 2
     pd
-    set color red
+    set color french-color
   ]
   if (xcor < 10)
   [
     set pen-size 2
     pd
-    set color blue
+    set color german-color
   ]
 end
 
@@ -1366,7 +1371,7 @@ PLOT
 22
 1557
 241
-Total Soliders:  French vs German
+Total Soldiers: French vs Germans
 Time
 Number of Soliders
 0.0
@@ -1377,8 +1382,8 @@ true
 false
 "" ""
 PENS
-"default" 1.0 0 -2674135 true "" "plot total-french"
-"pen-1" 1.0 0 -14730904 true "" "plot total-german"
+"french-plot-pen" 1.0 0 -15390905 true "" "plot total-french"
+"german-plot-pen" 1.0 0 -2674135 true "" "plot total-german"
 
 MONITOR
 1322
