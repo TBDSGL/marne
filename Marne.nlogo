@@ -186,7 +186,7 @@ end
 ;; Loads the data
 ;;**
 to load-form
-  import-world "savefile"
+  import-world file-name
   clear-plot
 end
 
@@ -194,7 +194,7 @@ end
 ;; Saves the data
 ;;**
 to save-form
-  export-world "savefile"
+  export-world file-name
   ;;save the red team coordinates
   ;carefully [ file-delete "red.txt" ][ write "File Not Deleted" ]
   ;file-open "red.txt"
@@ -1309,9 +1309,9 @@ PLOT
 22
 1557
 241
-plot 1
-NIL
-NIL
+Total Soliders:  French vs German
+Time
+Number of Soliders
 0.0
 10.0
 0.0
@@ -1355,6 +1355,17 @@ need-threshold
 1
 0
 Number
+
+INPUTBOX
+179
+34
+287
+94
+file-name
+NIL
+1
+0
+String
 
 @#$#@#$#@
 ## WHAT IS IT?
