@@ -177,7 +177,7 @@ to setup
   ;;setup-blue-form
   setup-frontline
   setup-referee
-  ask referees [calculate-totals]
+  clear-plot
   
   reset-ticks
 end
@@ -187,6 +187,7 @@ end
 ;;**
 to load-form
   import-world "savefile"
+  clear-plot
   ask referees [calculate-totals]
 end
 
@@ -433,10 +434,14 @@ to setup-referee
 end
 
 to reset-all-units
+  set total-german 0
+  set total-french 0
   setup-patches
   ask units [set-soldiers 1000]
   ask frontline_arrows [set xcor 10]
   ask referees [set referee_neighbors (other frontline_arrows in-radius 5)]
+  ask referees [calculate-totals]
+  clear-plot 
   reset-ticks
 end
 
@@ -454,15 +459,21 @@ to go-referee
     
     if ([soldiers] of french > 0) [
       ask german [set-soldiers (soldiers - french_strength)]
-      if (total-german > 0) [
+      ifelse (total-german > 0) [
         set total-german (total-german - french_strength)
+      ]
+      [
+        set total-german 0
       ]
     ]
     
     if ([soldiers] of german > 0) [
       ask french [set-soldiers (soldiers - german_strength)]
-      if (total-french > 0) [
+      ifelse (total-french > 0) [
         set total-french (total-french - german_strength)
+      ]
+      [
+        set total-french 0
       ]
     ]
     
@@ -864,12 +875,19 @@ to go-french
   set label need
   
   ;;temp debug for reinforce
-  if (ticks mod 25 = 0) [ set-soldiers soldiers]
+  if (ticks mod 25 = 0) [ 
+    let temp random 3
+    set-soldiers soldiers + temp
+    set total-french total-french + temp
+  ]
   set old-soldiers soldiers
 end
 
 to go-german
-  if (ticks mod 25 = 0) [ set-soldiers soldiers + 1 ]
+  if (ticks mod 25 = 0) [
+    set-soldiers soldiers + 1
+    set total-german total-german + 1 
+  ]
 end
 
 
@@ -1015,7 +1033,7 @@ CHOOSER
 type-to-add
 type-to-add
 "red" "blue" "taxi" "waypoint" "french" "german" "taxi spawner"
-6
+5
 
 BUTTON
 176
