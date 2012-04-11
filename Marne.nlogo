@@ -406,7 +406,7 @@ end
 to set-soldiers [newSoliderNo]
   set soldiers newSoliderNo
   set weight soldiers
-  set size soldiers / 400
+  set size soldiers / 200
 end
 
 ;;;;;;;;;; REFEREES ;;;;;;;;;;;
@@ -862,13 +862,13 @@ to go-french
   print "soldiers-diff"
   print soldiers-diff
   ;if (need = 0 and soldiers < 900) [
-  if (need = 0 and soldiers-diff < -2) [
+  if (need = 0 and soldiers-diff < need-threshold) [
     ; send back need
     set need 1
     set-my-need need
   ]
   ;if (need = 1 and soldiers > 900) [
-  if (need = 1 and soldiers-diff > -2) [
+  if (need = 1 and soldiers-diff > need-threshold) [
     set need 0
     set-my-need need
   ]
@@ -1033,7 +1033,7 @@ CHOOSER
 type-to-add
 type-to-add
 "red" "blue" "taxi" "waypoint" "french" "german" "taxi spawner"
-5
+6
 
 BUTTON
 176
@@ -1308,6 +1308,17 @@ total-german
 17
 1
 11
+
+INPUTBOX
+31
+742
+186
+802
+need-threshold
+-2
+1
+0
+Number
 
 @#$#@#$#@
 ## WHAT IS IT?
