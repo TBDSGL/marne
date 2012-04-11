@@ -531,14 +531,14 @@ to setup-frontline
   let start_y 28
   let loopNo 0
   ;;create 10 arrows
-  while [loopNo < referee-no ] [
+  while [loopNo < referee-no - 1 ] [
+    set start_y (start_y - 4)
     create-frontline_arrows 1 [
     set color german-color
     set heading 90 ;;0 is north, 90 is east, etc
     set xcor frontline-mid
     set ycor start_y
     ]
-    set start_y (start_y - 4)
     set loopNo (loopNo + 1)
   ]
   
@@ -559,7 +559,7 @@ to setup-frontline
   
   ;;set up links between the front line arrows
   set loopNo 0
-  while [loopNo < referee-no - 1 ]
+  while [loopNo < referee-no - 2 ]
   [
     ask turtle (first_id + loopNo) [ create-turtle-link-with turtle (first_id + loopNo + 1) ]
     set loopNo (loopNo + 1)
