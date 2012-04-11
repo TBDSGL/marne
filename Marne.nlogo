@@ -188,7 +188,6 @@ end
 to load-form
   import-world "savefile"
   clear-plot
-  ask referees [calculate-totals]
 end
 
 ;;**
