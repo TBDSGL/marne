@@ -181,7 +181,7 @@ to setup
   ;;setup-blue-form
   set french-color blue
   set german-color red
-  set frontline-mid-x 10
+  set frontline-mid 10
   set referee-no 7
   
   setup-frontline
@@ -423,7 +423,7 @@ end
 ;; Sets up the referees
 ;;**
 to setup-referee
-  let start_y 30
+  let start_y 20
   let loopNo 0
   ;;create 10 referees
   while [loopNo < referee-no] [
@@ -528,7 +528,7 @@ end
 ;; Sets up the front line
 ;;**
 to setup-frontline
-  let start_y 28
+  let start_y 22
   let loopNo 0
   ;;create 10 arrows
   while [loopNo < referee-no - 1 ] [
