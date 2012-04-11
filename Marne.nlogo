@@ -1031,9 +1031,9 @@ end
 GRAPHICS-WINDOW
 384
 15
-1577
+1421
 839
-45
+39
 30
 13.0
 1
@@ -1045,8 +1045,8 @@ GRAPHICS-WINDOW
 0
 0
 1
--45
-45
+-39
+39
 -30
 30
 0
@@ -1131,7 +1131,7 @@ CHOOSER
 type-to-add
 type-to-add
 "red" "blue" "taxi" "waypoint" "french" "german" "taxi spawner" "train spawner"
-7
+3
 
 BUTTON
 176
