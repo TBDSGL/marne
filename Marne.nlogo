@@ -97,6 +97,7 @@ units-own [
   previous-waypoints
   team
   need
+  old-soldiers
 ]
 
 to test
@@ -691,7 +692,8 @@ to-report get-next-waypoint
     ; if all waypoints have had something sent, reset sent value
     let all-sent 1
     foreach next-waypoints [
-      if (item 3 ? = 0) [ set all-sent 0 ]
+      ; only look at needy
+      if (item 2 ? = 1 and item 3 ? = 0) [ set all-sent 0 ]
     ]
     
     if (all-sent = 1) [
@@ -707,6 +709,7 @@ to-report get-next-waypoint
       ; if need, and hasn't been sent
       if (item 2 ? = 1 and item 3 ? = 0) [
         ; send on this path
+        set next-waypoints replace-item index next-waypoints (replace-item 3 (item index next-waypoints) 1)
         report get-waypoint-by-id item 0 ?
       ]
       set index (index + 1)
@@ -844,12 +847,17 @@ end
 
 
 to go-french
-  if (need = 0 and soldiers < 900) [
+  let soldiers-diff (soldiers - old-soldiers)
+  print "soldiers-diff"
+  print soldiers-diff
+  ;if (need = 0 and soldiers < 900) [
+  if (need = 0 and soldiers-diff < -2) [
     ; send back need
     set need 1
     set-my-need need
   ]
-  if (need = 1 and soldiers > 900) [
+  ;if (need = 1 and soldiers > 900) [
+  if (need = 1 and soldiers-diff > -2) [
     set need 0
     set-my-need need
   ]
@@ -857,6 +865,7 @@ to go-french
   
   ;;temp debug for reinforce
   if (ticks mod 25 = 0) [ set-soldiers soldiers]
+  set old-soldiers soldiers
 end
 
 to go-german
@@ -869,8 +878,8 @@ to set-need-for-id [new-need for-id]
   let index 0
   foreach next-waypoints [
     if ( item 0 ? = for-id ) [
-      print (item index next-waypoints)
-      print replace-item index next-waypoints (replace-item 2 (item index next-waypoints) new-need)
+      ;print (item index next-waypoints)
+      ;print replace-item index next-waypoints (replace-item 2 (item index next-waypoints) new-need)
       set next-waypoints replace-item index next-waypoints (replace-item 2 (item index next-waypoints) new-need)
     ]
     
@@ -878,7 +887,7 @@ to set-need-for-id [new-need for-id]
   ]
   
   foreach next-waypoints [
-    print item 2 ?
+    ;print item 2 ?
     if ((item 2 ?) = 1) [ set any-need 1 ]
   ]
   
@@ -899,8 +908,8 @@ to set-my-need [new-need]
 end
 
 to send-position
-  netsend:send "x" (xcor / max-pxcor)
-  netsend:send "y" (ycor / max-pycor)
+  ;netsend:send "x" (xcor / max-pxcor)
+  ;netsend:send "y" (ycor / max-pycor)
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -1201,8 +1210,8 @@ SLIDER
 max-taxis
 max-taxis
 0
-100
-10
+600
+600
 1
 1
 taxis
