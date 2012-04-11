@@ -102,6 +102,7 @@ units-own [
   team
   need
   old-soldiers
+  winning
 ]
 
 to test
@@ -347,6 +348,17 @@ to add-unit
       ]
     ]
     
+    if type-to-add = "train spawner" [
+      create-transport-spawners 1 [
+        set xcor mouse-xcor
+        set ycor mouse-ycor
+        ;set shape "square"
+        set color green
+        set type-to-spawn "train"
+        set number-to-spawn 2
+      ]
+    ]
+    
     set mouse-click 0
   ]
   
@@ -488,7 +500,7 @@ to go-referee
     let french-str [soldiers] of french
     let german-str [soldiers] of german
     ask referee_neighbors [set-frontline_arrow-direction (french-str - german-str) / 1000 ]
-   
+    ask french [ set winning (french-str - german-str) / 1000 ]
   ]
   
 end
@@ -642,7 +654,7 @@ to go-transport
     ]
     ;if only one next one, simply use the next one
     let old-waypoint current-waypoint
-    set current-waypoint [get-next-waypoint] of current-waypoint
+    set current-waypoint [get-next-waypoint ([transport-type] of myself)] of current-waypoint
     let next-path-type 0
     foreach ([next-waypoints] of old-waypoint) [
       print "test"
@@ -738,8 +750,28 @@ to-report get-next-waypoint-old
   ]
 end
 
-to-report get-next-waypoint
+to-report get-next-waypoint [for-transport-type]
   let index 0
+  
+  ; Only look at waypoints approprate for transport
+  let appropriate-waypoints []
+  foreach next-waypoints [
+    if (for-transport-type = "taxi") [
+      if (item 1 ? = "road" or item 1 ? = "footpath") [
+        set appropriate-waypoints lput ? appropriate-waypoints
+      ]
+    ]
+    if (for-transport-type = "train") [
+      if (item 1 ? = "rail" or item 1 ? = "footpath") [
+        set appropriate-waypoints lput ? appropriate-waypoints
+      ]
+    ]
+    if (for-transport-type = "person") [
+      set appropriate-waypoints next-waypoints
+    ]
+
+  ]
+  
   ifelse length next-waypoints = 0 [
     report 0
   ]
@@ -895,6 +927,32 @@ to go-transport-spawner
       ]
     ]
     
+    if (type-to-spawn = "train") [
+      hatch-transports spawning [
+        ;set xcor [xcor] of myself
+        ;set ycor [ycor] of myself
+        ;set path path-number
+        set current-waypoint 0
+        set size 3
+        set transport-type "train"
+        set current-units 200
+        
+        ;change shape of the transport depending on what kind of transport is being modeled
+        if (transport-type = "taxi")
+        [
+          set shape "car right"
+        ]
+        if (transport-type = "train")
+        [
+          set shape "train right"
+        ]
+        if (transport-type = "foot")
+        [
+          set shape "person"
+        ]
+      ]
+    ]
+    
     set ticks-to-next-spawn 5
     
   ]
@@ -903,7 +961,9 @@ end
 
 
 to go-french
-  let soldiers-diff (soldiers - old-soldiers)
+  if (old-soldiers = 0) [ set old-soldiers soldiers ]
+  ;let soldiers-diff (soldiers - old-soldiers) / old-soldiers
+  let soldiers-diff winning
   print "soldiers-diff"
   print soldiers-diff
   ;if (need = 0 and soldiers < 900) [
@@ -930,8 +990,8 @@ end
 
 to go-german
   if (ticks mod 25 = 0) [
-    set-soldiers soldiers + 1
-    set total-german total-german + 1 
+    set-soldiers soldiers + 5
+    set total-german total-german + 5
   ]
 end
 
@@ -1078,7 +1138,7 @@ CHOOSER
 type-to-add
 type-to-add
 "taxi" "waypoint" "french" "german" "taxi spawner" "train spawner"
-2
+5
 
 BUTTON
 185
@@ -1212,7 +1272,7 @@ CHOOSER
 path-type
 path-type
 "rail" "road" "footpath"
-0
+1
 
 BUTTON
 182
@@ -1274,7 +1334,7 @@ max-taxis
 max-taxis
 0
 600
-569
+600
 1
 1
 taxis
@@ -1360,7 +1420,7 @@ INPUTBOX
 376
 473
 need-threshold
--2
+0
 1
 0
 Number
@@ -1371,7 +1431,7 @@ INPUTBOX
 289
 73
 file-name
-semi-final
+semi-final-6
 1
 0
 String
