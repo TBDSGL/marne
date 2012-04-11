@@ -338,6 +338,17 @@ to add-unit
       ]
     ]
     
+    if type-to-add = "train spawner" [
+      create-transport-spawners 1 [
+        set xcor mouse-xcor
+        set ycor mouse-ycor
+        ;set shape "square"
+        set color green
+        set type-to-spawn "train"
+        set number-to-spawn 2
+      ]
+    ]
+    
     set mouse-click 0
   ]
   
@@ -633,7 +644,7 @@ to go-transport
     ]
     ;if only one next one, simply use the next one
     let old-waypoint current-waypoint
-    set current-waypoint [get-next-waypoint] of current-waypoint
+    set current-waypoint [get-next-waypoint ([transport-type] of myself)] of current-waypoint
     let next-path-type 0
     foreach ([next-waypoints] of old-waypoint) [
       print "test"
@@ -729,8 +740,28 @@ to-report get-next-waypoint-old
   ]
 end
 
-to-report get-next-waypoint
+to-report get-next-waypoint [for-transport-type]
   let index 0
+  
+  ; Only look at waypoints approprate for transport
+  let appropriate-waypoints []
+  foreach next-waypoints [
+    if (for-transport-type = "taxi") [
+      if (item 1 ? = "road" or item 1 ? = "footpath") [
+        set appropriate-waypoints lput ? appropriate-waypoints
+      ]
+    ]
+    if (for-transport-type = "train") [
+      if (item 1 ? = "rail" or item 1 ? = "footpath") [
+        set appropriate-waypoints lput ? appropriate-waypoints
+      ]
+    ]
+    if (for-transport-type = "person") [
+      set appropriate-waypoints next-waypoints
+    ]
+
+  ]
+  
   ifelse length next-waypoints = 0 [
     report 0
   ]
@@ -869,6 +900,32 @@ to go-transport-spawner
         set size 3
         set transport-type "taxi"
         set current-units random 20
+        
+        ;change shape of the transport depending on what kind of transport is being modeled
+        if (transport-type = "taxi")
+        [
+          set shape "car right"
+        ]
+        if (transport-type = "train")
+        [
+          set shape "train right"
+        ]
+        if (transport-type = "foot")
+        [
+          set shape "person"
+        ]
+      ]
+    ]
+    
+    if (type-to-spawn = "train") [
+      hatch-transports spawning [
+        ;set xcor [xcor] of myself
+        ;set ycor [ycor] of myself
+        ;set path path-number
+        set current-waypoint 0
+        set size 3
+        set transport-type "train"
+        set current-units 200
         
         ;change shape of the transport depending on what kind of transport is being modeled
         if (transport-type = "taxi")
@@ -1068,8 +1125,8 @@ CHOOSER
 177
 type-to-add
 type-to-add
-"red" "blue" "taxi" "waypoint" "french" "german" "taxi spawner"
-6
+"red" "blue" "taxi" "waypoint" "french" "german" "taxi spawner" "train spawner"
+7
 
 BUTTON
 176
@@ -1203,7 +1260,7 @@ CHOOSER
 path-type
 path-type
 "rail" "road" "footpath"
-2
+0
 
 BUTTON
 218
@@ -1362,7 +1419,7 @@ INPUTBOX
 287
 94
 file-name
-NIL
+with-rail
 1
 0
 String
