@@ -633,7 +633,29 @@ to go-transport
       die
     ]
     ;if only one next one, simply use the next one
+    let old-waypoint current-waypoint
     set current-waypoint [get-next-waypoint] of current-waypoint
+    let next-path-type 0
+    foreach ([next-waypoints] of old-waypoint) [
+      print "test"
+      print ?
+      print [id] of current-waypoint
+      if (item 0 ? = [id] of current-waypoint) [ set next-path-type item 1 ? ]
+      print next-path-type
+    ]
+    if ((transport-type = "taxi" or transport-type = "train") and next-path-type = "footpath") [
+      ;let people-to-spawn 
+      hatch-transports 1 [
+        ;set xcor [xcor] of myself
+        ;set ycor [ycor] of myself
+        ;set path path-number
+        set current-waypoint [current-waypoint] of myself
+        set size 2
+        set transport-type "person"
+        set current-units [current-units] of myself
+      ]
+      die
+    ]
   ]
   
   ;change the direction the transport is facing when moving in a certain direction
@@ -659,11 +681,26 @@ to go-transport
       set shape "train left"
     ]
   ]  
+  if (transport-type = "person")
+  [
+    set shape "person"
+  ]
   
   ;print next-waypoint
   if current-waypoint != 0 [
     set heading atan (([xcor] of current-waypoint) - xcor) (([ycor] of current-waypoint) - ycor)
-    fd 1
+    if (transport-type = "person")
+    [
+      fd .2
+    ]
+    if (transport-type = "taxi")
+    [
+      fd 1
+    ]
+    if (transport-type = "train")
+    [
+      fd 2
+    ]
   ]
 end
 
@@ -1167,7 +1204,7 @@ CHOOSER
 path-type
 path-type
 "rail" "road" "footpath"
-1
+2
 
 BUTTON
 218
