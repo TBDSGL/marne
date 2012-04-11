@@ -559,7 +559,7 @@ to setup-frontline
   
   ;;set up links between the front line arrows
   set loopNo 0
-  while [loopNo < referee-no]
+  while [loopNo < referee-no - 1 ]
   [
     ask turtle (first_id + loopNo) [ create-turtle-link-with turtle (first_id + loopNo + 1) ]
     set loopNo (loopNo + 1)
