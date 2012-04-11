@@ -12,6 +12,8 @@ globals [
   total-french
   french-color
   german-color
+  frontline-mid
+  referee-no
 ]
 
 directed-link-breed [ waypoint-links waypoint-link ]
@@ -179,6 +181,8 @@ to setup
   ;;setup-blue-form
   set french-color blue
   set german-color red
+  set frontline-mid 10
+  set referee-no 9
   
   setup-frontline
   setup-referee
@@ -343,17 +347,6 @@ to add-unit
       ]
     ]
     
-    if type-to-add = "train spawner" [
-      create-transport-spawners 1 [
-        set xcor mouse-xcor
-        set ycor mouse-ycor
-        ;set shape "square"
-        set color green
-        set type-to-spawn "train"
-        set number-to-spawn 2
-      ]
-    ]
-    
     set mouse-click 0
   ]
   
@@ -433,12 +426,12 @@ to setup-referee
   let start_y 26
   let loopNo 0
   ;;create 10 referees
-  while [loopNo < 9] [
+  while [loopNo < referee-no] [
     create-referees 1 [
     set color black
     set shape "circle"
     set size .5
-    set xcor 10
+    set xcor frontline-mid
     set ycor start_y
     set referee_neighbors other frontline_arrows in-radius 5
     
@@ -538,15 +531,15 @@ to setup-frontline
   let start_y 28
   let loopNo 0
   ;;create 10 arrows
-  while [loopNo < 10] [
+  while [loopNo < referee-no ] [
     create-frontline_arrows 1 [
     set color german-color
     set heading 90 ;;0 is north, 90 is east, etc
-    set xcor 10
+    set xcor frontline-mid
     set ycor start_y
     ]
-  set loopNo (loopNo + 1)
-  set start_y (start_y - 4)
+    set start_y (start_y - 4)
+    set loopNo (loopNo + 1)
   ]
   
   ;;gets the first ID of the arrows to set up links
@@ -566,7 +559,7 @@ to setup-frontline
   
   ;;set up links between the front line arrows
   set loopNo 0
-  while [loopNo < 9]
+  while [loopNo < referee-no]
   [
     ask turtle (first_id + loopNo) [ create-turtle-link-with turtle (first_id + loopNo + 1) ]
     set loopNo (loopNo + 1)
@@ -581,7 +574,7 @@ to go-frontline_arrow
   
   if (direction > 0) ;;french winning
   [
-    if (xcor < 20 and xcor > 0)
+    if (xcor < frontline-mid + 10 and xcor > frontline-mid - 10)
     [
       forward direction
     ]
@@ -593,7 +586,7 @@ to go-frontline_arrow
   ]
   if (direction < 0) ;;germans winning
   [
-    if (xcor < 20 and xcor > 0)
+    if (xcor < frontline-mid + 10 and xcor > 0)
     [
       forward -1 * direction
     ]
@@ -601,13 +594,13 @@ to go-frontline_arrow
     set heading 270
   ]
   
-  if (xcor > 10)
+  if (xcor > frontline-mid)
   [
     set pen-size 2
     pd
     set color french-color
   ]
-  if (xcor < 10)
+  if (xcor < frontline-mid)
   [
     set pen-size 2
     pd
@@ -649,7 +642,7 @@ to go-transport
     ]
     ;if only one next one, simply use the next one
     let old-waypoint current-waypoint
-    set current-waypoint [get-next-waypoint ([transport-type] of myself)] of current-waypoint
+    set current-waypoint [get-next-waypoint] of current-waypoint
     let next-path-type 0
     foreach ([next-waypoints] of old-waypoint) [
       print "test"
@@ -745,28 +738,8 @@ to-report get-next-waypoint-old
   ]
 end
 
-to-report get-next-waypoint [for-transport-type]
+to-report get-next-waypoint
   let index 0
-  
-  ; Only look at waypoints approprate for transport
-  let appropriate-waypoints []
-  foreach next-waypoints [
-    if (for-transport-type = "taxi") [
-      if (item 1 ? = "road" or item 1 ? = "footpath") [
-        set appropriate-waypoints lput ? appropriate-waypoints
-      ]
-    ]
-    if (for-transport-type = "train") [
-      if (item 1 ? = "rail" or item 1 ? = "footpath") [
-        set appropriate-waypoints lput ? appropriate-waypoints
-      ]
-    ]
-    if (for-transport-type = "person") [
-      set appropriate-waypoints next-waypoints
-    ]
-
-  ]
-  
   ifelse length next-waypoints = 0 [
     report 0
   ]
@@ -922,32 +895,6 @@ to go-transport-spawner
       ]
     ]
     
-    if (type-to-spawn = "train") [
-      hatch-transports spawning [
-        ;set xcor [xcor] of myself
-        ;set ycor [ycor] of myself
-        ;set path path-number
-        set current-waypoint 0
-        set size 3
-        set transport-type "train"
-        set current-units 200
-        
-        ;change shape of the transport depending on what kind of transport is being modeled
-        if (transport-type = "taxi")
-        [
-          set shape "car right"
-        ]
-        if (transport-type = "train")
-        [
-          set shape "train right"
-        ]
-        if (transport-type = "foot")
-        [
-          set shape "person"
-        ]
-      ]
-    ]
-    
     set ticks-to-next-spawn 5
     
   ]
@@ -1031,9 +978,9 @@ end
 GRAPHICS-WINDOW
 384
 15
-1421
+1577
 839
-39
+45
 30
 13.0
 1
@@ -1045,8 +992,8 @@ GRAPHICS-WINDOW
 0
 0
 1
--39
-39
+-45
+45
 -30
 30
 0
@@ -1056,10 +1003,10 @@ ticks
 30.0
 
 BUTTON
-292
-70
-355
-103
+299
+55
+362
+88
 Save
 save-form
 NIL
@@ -1073,11 +1020,11 @@ NIL
 1
 
 BUTTON
-19
-29
-88
-62
-NIL
+12
+96
+85
+129
+Clear
 clear
 NIL
 1
@@ -1090,10 +1037,10 @@ NIL
 1
 
 BUTTON
-103
-28
-166
-61
+92
+12
+155
+45
 NIL
 Go
 T
@@ -1107,10 +1054,10 @@ NIL
 1
 
 BUTTON
-292
-28
-356
-61
+299
+13
+363
+46
 Load
 load-form
 NIL
@@ -1124,20 +1071,20 @@ NIL
 1
 
 CHOOSER
-17
-132
-155
-177
+16
+507
+172
+552
 type-to-add
 type-to-add
-"red" "blue" "taxi" "waypoint" "french" "german" "taxi spawner" "train spawner"
-3
+"taxi" "waypoint" "french" "german" "taxi spawner" "train spawner"
+2
 
 BUTTON
-176
-136
-262
-169
+185
+513
+335
+546
 NIL
 add-unit
 T
@@ -1151,10 +1098,10 @@ NIL
 1
 
 BUTTON
-211
-405
-314
-438
+17
+787
+120
+820
 Toggle Map
 setup-patches
 NIL
@@ -1168,10 +1115,10 @@ NIL
 1
 
 INPUTBOX
-14
-200
-169
-260
+16
+560
+171
+620
 path-number
 2
 1
@@ -1179,10 +1126,10 @@ path-number
 Number
 
 BUTTON
-188
-215
-305
-248
+184
+573
+337
+606
 NIL
 add-waypoint
 T
@@ -1196,10 +1143,10 @@ NIL
 1
 
 BUTTON
-184
-292
-338
-325
+183
+641
+337
+674
 NIL
 reset-last-waypoint
 NIL
@@ -1213,10 +1160,10 @@ NIL
 1
 
 INPUTBOX
-12
-278
-167
-338
+15
+626
+170
+686
 last-placed-waypoint
 0
 1
@@ -1224,10 +1171,10 @@ last-placed-waypoint
 Number
 
 BUTTON
-21
-393
-84
-426
+19
+826
+82
+859
 NIL
 test
 NIL
@@ -1241,10 +1188,10 @@ NIL
 1
 
 BUTTON
-23
-452
-181
-485
+182
+702
+340
+735
 NIL
 associate-waypoints
 T
@@ -1258,20 +1205,20 @@ NIL
 1
 
 CHOOSER
-34
-504
-172
-549
+15
+698
+170
+743
 path-type
 path-type
 "rail" "road" "footpath"
 0
 
 BUTTON
-218
-458
-369
-491
+182
+747
+343
+780
 NIL
 associate-referees
 T
@@ -1285,11 +1232,11 @@ NIL
 1
 
 BUTTON
-40
-597
-159
-630
-NIL
+12
+55
+83
+88
+Reset
 reset-all-units
 NIL
 1
@@ -1302,10 +1249,10 @@ NIL
 1
 
 BUTTON
-100
-73
-169
-106
+12
+12
+81
+45
 Setup
 setup
 NIL
@@ -1319,25 +1266,25 @@ NIL
 1
 
 SLIDER
-30
-666
 202
-699
+373
+374
+406
 max-taxis
 max-taxis
 0
 600
-600
+569
 1
 1
 taxis
 HORIZONTAL
 
 SWITCH
-182
-617
-359
-650
+14
+449
+191
+482
 spawn-sequentially
 spawn-sequentially
 0
@@ -1345,10 +1292,10 @@ spawn-sequentially
 -1000
 
 SWITCH
-210
-516
-341
-549
+15
+408
+192
+441
 show-roads
 show-roads
 1
@@ -1356,10 +1303,10 @@ show-roads
 -1000
 
 SWITCH
-212
-563
-333
-596
+15
+366
+192
+399
 show-rails
 show-rails
 1
@@ -1367,10 +1314,10 @@ show-rails
 -1000
 
 PLOT
-1321
-22
-1557
-241
+12
+137
+248
+356
 Total Soldiers: French vs Germans
 Time
 Number of Soliders
@@ -1386,10 +1333,10 @@ PENS
 "german-plot-pen" 1.0 0 -2674135 true "" "plot total-german"
 
 MONITOR
-1322
-256
-1401
-301
+258
+137
+337
+182
 NIL
 total-french
 17
@@ -1397,10 +1344,10 @@ total-french
 11
 
 MONITOR
-1472
-257
-1557
-302
+258
+193
+343
+238
 NIL
 total-german
 17
@@ -1408,10 +1355,10 @@ total-german
 11
 
 INPUTBOX
-31
-742
-186
-802
+202
+412
+376
+473
 need-threshold
 -2
 1
@@ -1419,12 +1366,12 @@ need-threshold
 Number
 
 INPUTBOX
-179
-34
-287
-94
+181
+13
+289
+73
 file-name
-with-rail
+semi-final
 1
 0
 String
