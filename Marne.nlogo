@@ -14,6 +14,7 @@ globals [
   german-color
   frontline-mid
   referee-no
+  myTurtleScale
 ]
 
 directed-link-breed [ waypoint-links waypoint-link ]
@@ -180,10 +181,13 @@ to setup
   
   ;;setup-red-form
   ;;setup-blue-form
+  
+  ;;***GLOBAL SETUP INFORMATION HERE***
   set french-color blue
   set german-color red
   set frontline-mid 10
   set referee-no 7
+  set myTurtleScale 5000
   
   setup-frontline
   setup-referee
@@ -310,9 +314,10 @@ to add-unit
         set id random 10000000
         set shape "square"
         set color french-color
-        set-soldiers 1000
-        set rof 10
-        set hit_prob .5
+        set-soldiers unit-soldier-count
+        set rof unit-rof
+        set hit_prob unit-hit-prob
+        set ammo_per_soldier unit-ammo-per-soldier
         set team "french"
         ;set weight random 5
         set next-waypoints []
@@ -328,9 +333,10 @@ to add-unit
         set shape "square"
         set color german-color
         set team "german"
-        set-soldiers 1000
-        set rof 10
-        set hit_prob .5
+        set-soldiers unit-soldier-count
+        set rof unit-rof
+        set hit_prob unit-hit-prob
+        set ammo_per_soldier unit-ammo-per-soldier
         ;set weight random 5
         set next-waypoints []
         set previous-waypoints []
@@ -426,7 +432,7 @@ end
 to set-soldiers [newSoliderNo]
   set soldiers newSoliderNo
   set weight soldiers
-  set size soldiers / 200
+  set size soldiers / myTurtleScale
 end
 
 ;;;;;;;;;; REFEREES ;;;;;;;;;;;
@@ -1138,7 +1144,7 @@ CHOOSER
 type-to-add
 type-to-add
 "taxi" "waypoint" "french" "german" "taxi spawner" "train spawner"
-5
+2
 
 BUTTON
 185
@@ -1382,10 +1388,10 @@ Total Soldiers: French vs Germans
 Time
 Number of Soliders
 0.0
-10.0
+1440.0
 0.0
-10.0
-true
+157500.0
+false
 false
 "" ""
 PENS
@@ -1432,6 +1438,50 @@ INPUTBOX
 73
 file-name
 semi-final-6
+1
+0
+String
+
+INPUTBOX
+1434
+17
+1543
+77
+unit-soldier-count
+20000
+1
+0
+Number
+
+INPUTBOX
+1435
+88
+1544
+148
+unit-rof
+10
+1
+0
+Number
+
+INPUTBOX
+1436
+159
+1542
+219
+unit-hit-prob
+.5
+1
+0
+String
+
+INPUTBOX
+1437
+227
+1556
+287
+unit-ammo-per-soldier
+100
 1
 0
 String
