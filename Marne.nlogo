@@ -8,8 +8,6 @@ globals [
   ;last-placed-waypoint
   association-root
   association-root-referee
-  total-german
-  total-french
   french-color
   german-color
   frontline-mid
@@ -150,6 +148,7 @@ end
 ;; Runs the simulation
 ;; **
 to go
+    set myTurtleScale 5000
   ;;ask reds [fd 1 rt random 90 lt random 90]
   ;;ask blues [fd 1 rt random 90 lt random 90]
   ask transports [ go-transport ]
@@ -160,6 +159,7 @@ to go
   ask units [ if (team = "german") [go-german] if (team = "french") [go-french] ]
   ask transport-spawners [ go-transport-spawner] 
   ask waypoint-links [ handle-visible ] 
+
   
   tick
   
@@ -460,13 +460,10 @@ to setup-referee
 end
 
 to reset-all-units
-  set total-german 0
-  set total-french 0
   setup-patches
   ask units [set-soldiers 1000]
   ask frontline_arrows [set xcor 10]
   ask referees [set referee_neighbors (other frontline_arrows in-radius 5)]
-  ask referees [calculate-totals]
   clear-plot 
   reset-ticks
 end
@@ -485,22 +482,18 @@ to go-referee
     
     if ([soldiers] of french > 0) [
       ask german [set-soldiers (soldiers - french_strength)]
-      ifelse (total-german > 0) [
-        set total-german (total-german - french_strength)
-      ]
-      [
-        set total-german 0
-      ]
     ]
     
     if ([soldiers] of german > 0) [
       ask french [set-soldiers (soldiers - german_strength)]
-      ifelse (total-french > 0) [
-        set total-french (total-french - german_strength)
-      ]
-      [
-        set total-french 0
-      ]
+    ]
+    
+    if ([soldiers] of french < 0) [
+      ask french [set-soldiers 0]
+    ]
+    
+    if ([soldiers] of german < 0) [
+      ask german [set-soldiers 0]
     ]
     
     let french-str [soldiers] of french
@@ -537,10 +530,18 @@ to associate-referees
 
 end
 
-to calculate-totals
-  set total-french (total-french + [soldiers] of french)
-  set total-german (total-german + [soldiers] of german)
+to-report total-french
+  let val 0
+  ask units [if team = "french" [set val (val + soldiers)] ]  
+  report val
 end
+
+to-report total-german
+  let val 0
+  ask units [if team = "german" [set val (val + soldiers)] ]  
+  report val
+end
+
 ;;;;;;;;;; FRONTLINE ARROWS ;;;;;;;;;;;;;
 ;;** 
 ;; Sets up the front line
@@ -989,7 +990,6 @@ to go-french
   if (ticks mod 25 = 0) [ 
     let temp random 3
     set-soldiers soldiers + temp
-    set total-french total-french + temp
   ]
   set old-soldiers soldiers
 end
@@ -997,7 +997,6 @@ end
 to go-german
   if (ticks mod 25 = 0) [
     set-soldiers soldiers + 5
-    set total-german total-german + 5
   ]
 end
 
@@ -1144,7 +1143,7 @@ CHOOSER
 type-to-add
 type-to-add
 "taxi" "waypoint" "french" "german" "taxi spawner" "train spawner"
-2
+5
 
 BUTTON
 185
@@ -1401,7 +1400,7 @@ PENS
 MONITOR
 258
 137
-337
+372
 182
 NIL
 total-french
