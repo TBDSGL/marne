@@ -13,6 +13,8 @@ globals [
   frontline-mid
   referee-no
   myTurtleScale
+  thresh-x
+  thresh-b
 ]
 
 directed-link-breed [ waypoint-links waypoint-link ]
@@ -91,7 +93,10 @@ waypoints-own [
 
 units-own [
   id
-  soldiers
+  org-soldiers
+  cur-soldiers
+  old-soldiers
+  thresh-retreat
   rof
   hit_prob
   ammo_per_soldier
@@ -100,7 +105,6 @@ units-own [
   previous-waypoints
   team
   need
-  old-soldiers
   winning
 ]
 
@@ -188,6 +192,9 @@ to setup
   set frontline-mid 10
   set referee-no 7
   set myTurtleScale 5000
+  ;; ratio = initial mass of troops * x + b
+  set thresh-x -.000082
+  set thresh-b .9278648
   
   setup-frontline
   setup-referee
@@ -315,6 +322,7 @@ to add-unit
         set shape "square"
         set color french-color
         set-soldiers unit-soldier-count
+        set thresh-retreat org-soldiers * thresh-x + thresh-b
         set rof unit-rof
         set hit_prob unit-hit-prob
         set ammo_per_soldier unit-ammo-per-soldier
@@ -334,6 +342,7 @@ to add-unit
         set color german-color
         set team "german"
         set-soldiers unit-soldier-count
+        set thresh-retreat org-soldiers * thresh-x + thresh-b
         set rof unit-rof
         set hit_prob unit-hit-prob
         set ammo_per_soldier unit-ammo-per-soldier
@@ -430,9 +439,10 @@ to setup-blue-form
 end
 
 to set-soldiers [newSoliderNo]
-  set soldiers newSoliderNo
-  set weight soldiers
-  set size soldiers / myTurtleScale
+  set cur-soldiers newSoliderNo
+  set org-soldiers cur-soldiers
+  set weight cur-soldiers
+  set size cur-soldiers / myTurtleScale
 end
 
 ;;;;;;;;;; REFEREES ;;;;;;;;;;;
@@ -477,27 +487,29 @@ to go-referee
   let phi .001
   
   if (french != 0 and german != 0) [
-    let french_strength ([soldiers] of french) * ([rof] of french) * ([hit_prob] of french) * alpha
-    let german_strength ([soldiers] of german) * ([rof] of german) * ([hit_prob] of german) * phi
+    let french_strength ([cur-soldiers] of french) * ([rof] of french) * ([hit_prob] of french) * alpha
+    let german_strength ([cur-soldiers] of german) * ([rof] of german) * ([hit_prob] of german) * phi
     
-    if ([soldiers] of french > 0) [
-      ask german [set-soldiers (soldiers - french_strength)]
+    print ([thresh-retreat] of french)
+    
+    if ([cur-soldiers] of french / [org-soldiers] of french > [thresh-retreat] of french) [
+      ask german [set-soldiers (cur-soldiers - french_strength)]
     ]
     
-    if ([soldiers] of german > 0) [
-      ask french [set-soldiers (soldiers - german_strength)]
+    if ([cur-soldiers] of german / [org-soldiers] of german > [thresh-retreat] of german) [
+      ask french [set-soldiers (cur-soldiers - german_strength)]
     ]
     
-    if ([soldiers] of french < 0) [
+    if ([cur-soldiers] of french < 0) [
       ask french [set-soldiers 0]
     ]
     
-    if ([soldiers] of german < 0) [
+    if ([cur-soldiers] of german < 0) [
       ask german [set-soldiers 0]
     ]
     
-    let french-str [soldiers] of french
-    let german-str [soldiers] of german
+    let french-str [cur-soldiers] of french
+    let german-str [cur-soldiers] of german
     ask referee_neighbors [set-frontline_arrow-direction (french-str - german-str) / 1000 ]
     ask french [ set winning (french-str - german-str) / 1000 ]
   ]
@@ -532,13 +544,13 @@ end
 
 to-report total-french
   let val 0
-  ask units [if team = "french" [set val (val + soldiers)] ]  
+  ask units [if team = "french" [set val (val + cur-soldiers)] ]  
   report val
 end
 
 to-report total-german
   let val 0
-  ask units [if team = "german" [set val (val + soldiers)] ]  
+  ask units [if team = "german" [set val (val + cur-soldiers)] ]  
   report val
 end
 
@@ -656,7 +668,7 @@ to go-transport
   ;check to see if within range of a waypoint
   if (current-waypoint != 0 and (abs (xcor - ([xcor] of current-waypoint))) < 2 and (abs (ycor - ([ycor] of current-waypoint))) < 2) [
     if (is-unit? current-waypoint) [
-      ask current-waypoint [ set-soldiers (soldiers + [current-units] of myself) ]
+      ask current-waypoint [ set-soldiers (cur-soldiers + [current-units] of myself) ]
       die
     ]
     ;if only one next one, simply use the next one
@@ -968,7 +980,7 @@ end
 
 
 to go-french
-  if (old-soldiers = 0) [ set old-soldiers soldiers ]
+  if (old-soldiers = 0) [ set old-soldiers cur-soldiers ]
   ;let soldiers-diff (soldiers - old-soldiers) / old-soldiers
   let soldiers-diff winning
   print "soldiers-diff"
@@ -989,14 +1001,14 @@ to go-french
   ;;temp debug for reinforce
   if (ticks mod 25 = 0) [ 
     let temp random 3
-    set-soldiers soldiers + temp
+    set-soldiers cur-soldiers + temp
   ]
-  set old-soldiers soldiers
+  set old-soldiers cur-soldiers
 end
 
 to go-german
   if (ticks mod 25 = 0) [
-    set-soldiers soldiers + 5
+    set-soldiers cur-soldiers + 5
   ]
 end
 
@@ -1143,7 +1155,7 @@ CHOOSER
 type-to-add
 type-to-add
 "taxi" "waypoint" "french" "german" "taxi spawner" "train spawner"
-5
+2
 
 BUTTON
 185
@@ -1277,7 +1289,7 @@ CHOOSER
 path-type
 path-type
 "rail" "road" "footpath"
-1
+0
 
 BUTTON
 182
@@ -1436,7 +1448,7 @@ INPUTBOX
 289
 73
 file-name
-semi-final-6
+battle-testing
 1
 0
 String
@@ -1447,7 +1459,7 @@ INPUTBOX
 1543
 77
 unit-soldier-count
-20000
+14000
 1
 0
 Number
@@ -1466,24 +1478,24 @@ Number
 INPUTBOX
 1436
 159
-1542
+1591
 219
 unit-hit-prob
-.5
+0.5
 1
 0
-String
+Number
 
 INPUTBOX
 1437
 227
-1556
+1592
 287
 unit-ammo-per-soldier
-100
+10
 1
 0
-String
+Number
 
 @#$#@#$#@
 ## WHAT IS IT?
