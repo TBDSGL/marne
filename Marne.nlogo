@@ -13,8 +13,6 @@ globals [
   frontline-mid
   referee-no
   myTurtleScale
-  thresh-x
-  thresh-b
 ]
 
 directed-link-breed [ waypoint-links waypoint-link ]
@@ -192,9 +190,6 @@ to setup
   set frontline-mid 10
   set referee-no 7
   set myTurtleScale 5000
-  ;; ratio = initial mass of troops * x + b
-  set thresh-x -.000082
-  set thresh-b .9278648
   
   setup-frontline
   setup-referee
@@ -322,7 +317,8 @@ to add-unit
         set shape "square"
         set color french-color
         set-soldiers unit-soldier-count
-        set thresh-retreat org-soldiers * thresh-x + thresh-b
+        set org-soldiers cur-soldiers
+        set thresh-retreat 0.8
         set rof unit-rof
         set hit_prob unit-hit-prob
         set ammo_per_soldier unit-ammo-per-soldier
@@ -342,7 +338,8 @@ to add-unit
         set color german-color
         set team "german"
         set-soldiers unit-soldier-count
-        set thresh-retreat org-soldiers * thresh-x + thresh-b
+        set org-soldiers cur-soldiers
+        set thresh-retreat 0.8
         set rof unit-rof
         set hit_prob unit-hit-prob
         set ammo_per_soldier unit-ammo-per-soldier
@@ -440,7 +437,6 @@ end
 
 to set-soldiers [newSoliderNo]
   set cur-soldiers newSoliderNo
-  set org-soldiers cur-soldiers
   set weight cur-soldiers
   set size cur-soldiers / myTurtleScale
 end
@@ -492,13 +488,25 @@ to go-referee
     
     print ([thresh-retreat] of french)
     
+    let german-fight false
+    let french-fight false
+    
     if ([cur-soldiers] of french / [org-soldiers] of french > [thresh-retreat] of french) [
-      ask german [set-soldiers (cur-soldiers - french_strength)]
+      set french-fight true
     ]
     
     if ([cur-soldiers] of german / [org-soldiers] of german > [thresh-retreat] of german) [
+      set german-fight true
+    ]
+    
+    if (french-fight = true) [
+      ask german [set-soldiers (cur-soldiers - french_strength)]
+    ]
+    
+    if (german-fight = true) [
       ask french [set-soldiers (cur-soldiers - german_strength)]
     ]
+          
     
     if ([cur-soldiers] of french < 0) [
       ask french [set-soldiers 0]
@@ -998,18 +1006,18 @@ to go-french
   ]
   set label need
   
-  ;;temp debug for reinforce
-  if (ticks mod 25 = 0) [ 
-    let temp random 3
-    set-soldiers cur-soldiers + temp
-  ]
-  set old-soldiers cur-soldiers
+;  ;;temp debug for reinforce
+;  if (ticks mod 25 = 0) [ 
+;    let temp random 3
+;    set-soldiers cur-soldiers + temp
+;  ]
+;  set old-soldiers cur-soldiers
 end
 
 to go-german
-  if (ticks mod 25 = 0) [
-    set-soldiers cur-soldiers + 5
-  ]
+;  if (ticks mod 25 = 0) [
+;    set-soldiers cur-soldiers + 5
+;  ]
 end
 
 
