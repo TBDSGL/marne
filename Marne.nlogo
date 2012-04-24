@@ -367,7 +367,7 @@ to add-unit
         ;set shape "square"
         set color green
         set type-to-spawn "train"
-        set number-to-spawn 2
+        set number-to-spawn max-trains
       ]
     ]
     
@@ -1156,20 +1156,20 @@ NIL
 1
 
 CHOOSER
-16
-507
-172
-552
+1438
+301
+1594
+346
 type-to-add
 type-to-add
 "taxi" "waypoint" "french" "german" "taxi spawner" "train spawner"
 2
 
 BUTTON
-185
-513
-335
-546
+1438
+357
+1588
+390
 NIL
 add-unit
 T
@@ -1200,10 +1200,10 @@ NIL
 1
 
 INPUTBOX
-16
-560
-171
-620
+14
+499
+169
+559
 path-number
 2
 1
@@ -1211,10 +1211,10 @@ path-number
 Number
 
 BUTTON
-184
-573
-337
-606
+182
+512
+335
+545
 NIL
 add-waypoint
 T
@@ -1228,10 +1228,10 @@ NIL
 1
 
 BUTTON
-183
-641
-337
-674
+181
+580
+335
+613
 NIL
 reset-last-waypoint
 NIL
@@ -1245,10 +1245,10 @@ NIL
 1
 
 INPUTBOX
-15
-626
-170
-686
+13
+565
+168
+625
 last-placed-waypoint
 0
 1
@@ -1273,10 +1273,10 @@ NIL
 1
 
 BUTTON
-182
-702
-340
-735
+180
+641
+338
+674
 NIL
 associate-waypoints
 T
@@ -1290,20 +1290,20 @@ NIL
 1
 
 CHOOSER
-15
-698
-170
-743
+13
+637
+168
+682
 path-type
 path-type
 "rail" "road" "footpath"
 0
 
 BUTTON
-182
-747
-343
-780
+180
+686
+341
+719
 NIL
 associate-referees
 T
@@ -1351,10 +1351,10 @@ NIL
 1
 
 SLIDER
-202
-373
-374
-406
+203
+409
+375
+442
 max-taxis
 max-taxis
 0
@@ -1440,10 +1440,10 @@ total-german
 11
 
 INPUTBOX
-202
-412
-376
-473
+1438
+470
+1612
+531
 need-threshold
 0
 1
@@ -1504,6 +1504,21 @@ unit-ammo-per-soldier
 1
 0
 Number
+
+SLIDER
+203
+369
+375
+402
+max-trains
+max-trains
+0
+10
+10
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
