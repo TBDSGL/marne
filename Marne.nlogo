@@ -580,13 +580,13 @@ to-report total-french
     set retreat-flag true
   ]
   
-  report val
+  report round val
 end
 
 to-report total-german
   let val 0
   ask units [if team = "german" [set val (val + cur-soldiers)] ]  
-  report val
+  report round val
 end
 
 ;;;;;;;;;; FRONTLINE ARROWS ;;;;;;;;;;;;;
@@ -1616,7 +1616,7 @@ INPUTBOX
 1594
 608
 total-reinforcements
-0
+13600
 1
 0
 Number
