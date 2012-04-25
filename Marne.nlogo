@@ -13,6 +13,7 @@ globals [
   frontline-mid
   referee-no
   myTurtleScale
+  retreat-flag
 ]
 
 directed-link-breed [ waypoint-links waypoint-link ]
@@ -151,7 +152,7 @@ end
 ;; Runs the simulation
 ;; **
 to go
-    set myTurtleScale 5000
+  set myTurtleScale 5000
   ;;ask reds [fd 1 rt random 90 lt random 90]
   ;;ask blues [fd 1 rt random 90 lt random 90]
   ask transports [ go-transport ]
@@ -163,6 +164,10 @@ to go
   ask transport-spawners [ go-transport-spawner] 
   ask waypoint-links [ handle-visible ] 
 
+  print retreat-flag
+  if (retreat-flag = true) [
+    print "RETREAT!!!!"
+  ]
   
   tick
   
@@ -188,9 +193,10 @@ to setup
   ;;***GLOBAL SETUP INFORMATION HERE***
   set french-color blue
   set german-color red
-  set frontline-mid 10
-  set referee-no 7
+  set frontline-mid 12
+  set referee-no 6
   set myTurtleScale 5000
+  set retreat-flag false
   
   setup-frontline
   setup-referee
@@ -205,6 +211,7 @@ end
 to load-form
   import-world file-name
   clear-plot
+  set retreat-flag false
 end
 
 ;;**
@@ -448,7 +455,7 @@ end
 ;; Sets up the referees
 ;;**
 to setup-referee
-  let start_y 20
+  let start_y 20 + 5
   let loopNo 0
   ;;create 10 referees
   while [loopNo < referee-no] [
@@ -462,7 +469,7 @@ to setup-referee
     
     ]
   set loopNo (loopNo + 1)
-  set start_y (start_y - 4)
+  set start_y (start_y - 5)
   ]
 end
 
@@ -481,7 +488,7 @@ end
 to go-referee
   
   let alpha .001
-  let phi .001
+  let phi .002
   
   if (french != 0 and german != 0) [
     let french_strength ([cur-soldiers] of french) * ([rof] of french) * ([hit_prob] of french) * alpha
@@ -501,11 +508,11 @@ to go-referee
     ]
     
     if (french-fight = true) [
-      ask german [set-soldiers (cur-soldiers - french_strength)]
+      ask german [set-soldiers (cur-soldiers - french_strength / 10)]
     ]
     
     if (german-fight = true) [
-      ask french [set-soldiers (cur-soldiers - german_strength)]
+      ask french [set-soldiers (cur-soldiers - german_strength / 10)]
     ]
           
     
@@ -519,7 +526,7 @@ to go-referee
     
     let french-str [cur-soldiers] of french
     let german-str [cur-soldiers] of german
-    ask referee_neighbors [set-frontline_arrow-direction (french-str - german-str) / 1000 ]
+    ask referee_neighbors [set-frontline_arrow-direction (french-str - german-str) / 10000 ]
     ask french [ set winning (french-str - german-str) / 1000 ]
   ]
   
@@ -553,7 +560,14 @@ end
 
 to-report total-french
   let val 0
+  let retreat-total 0
   ask units [if team = "french" [set val (val + cur-soldiers)] ]  
+  ask units [if (team = "french" and (cur-soldiers / org-soldiers < thresh-retreat)) [set retreat-total (retreat-total + 1) ] ]
+  
+  if (retreat-total = referee-no ) [
+    set retreat-flag true
+  ]
+  
   report val
 end
 
@@ -568,11 +582,11 @@ end
 ;; Sets up the front line
 ;;**
 to setup-frontline
-  let start_y 22
+  let start_y 20 + 5 / 2
   let loopNo 0
   ;;create 10 arrows
   while [loopNo < referee-no - 1 ] [
-    set start_y (start_y - 4)
+    set start_y (start_y - 5)
     create-frontline_arrows 1 [
     set color german-color
     set heading 90 ;;0 is north, 90 is east, etc
@@ -839,8 +853,10 @@ to-report get-next-waypoint [for-transport-type is-returning]
       ; if need, and hasn't been sent
       if (item 2 ? = 1 and item 3 ? = 0) [
         ; send on this path
-        set next-waypoints replace-item index next-waypoints (replace-item 3 (item index next-waypoints) 1)
-        report get-waypoint-by-id item 0 ?
+        if ((for-transport-type = "train" and (item 1 ? = "rail" or item 1 ? = "footpath")) or (for-transport-type = "taxi" and (item 1 ? = "rail" or item 1 ? = "footpath"))) [ 
+          set next-waypoints replace-item index next-waypoints (replace-item 3 (item index next-waypoints) 1)
+          report get-waypoint-by-id item 0 ?
+        ]
       ]
       set index (index + 1)
     ]
@@ -1021,12 +1037,12 @@ to go-french
   ]
   set label need
   
-;  ;;temp debug for reinforce
-;  if (ticks mod 25 = 0) [ 
-;    let temp random 3
-;    set-soldiers cur-soldiers + temp
-;  ]
-;  set old-soldiers cur-soldiers
+  ;;temp debug for reinforce
+  if (ticks mod 25 = 0) [ 
+    let temp random 3
+    set-soldiers cur-soldiers - temp
+  ]
+  set old-soldiers cur-soldiers
 end
 
 to go-german
@@ -1178,7 +1194,7 @@ CHOOSER
 type-to-add
 type-to-add
 "taxi" "waypoint" "french" "german" "taxi spawner" "train spawner"
-4
+3
 
 BUTTON
 1438
@@ -1312,7 +1328,7 @@ CHOOSER
 path-type
 path-type
 "rail" "road" "footpath"
-1
+0
 
 BUTTON
 180
@@ -1424,7 +1440,7 @@ Number of Soliders
 0.0
 1440.0
 0.0
-157500.0
+70000.0
 false
 false
 "" ""
@@ -1471,7 +1487,7 @@ INPUTBOX
 289
 73
 file-name
-semi-final-6
+battle-testing
 1
 0
 String
@@ -1534,6 +1550,28 @@ max-trains
 1
 NIL
 HORIZONTAL
+
+INPUTBOX
+1439
+548
+1594
+608
+total-reinforcements
+0
+1
+0
+Number
+
+MONITOR
+258
+253
+336
+298
+NIL
+retreat-flag
+17
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
