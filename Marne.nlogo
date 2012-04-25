@@ -127,7 +127,7 @@ to clear
   
   setup-patches
 
-  netsend:send "reset" 0
+  ;netsend:send "reset" 0
 
   reset-ticks
   
