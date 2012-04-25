@@ -164,7 +164,7 @@ to go
   ask transport-spawners [ go-transport-spawner] 
   ask waypoint-links [ handle-visible ] 
 
-  print retreat-flag
+  ;print retreat-flag
   if (retreat-flag = true) [
     print "RETREAT!!!!"
   ]
@@ -505,7 +505,7 @@ to go-referee
     let french_strength ([cur-soldiers] of french) * ([rof] of french) * ([hit_prob] of french) * alpha
     let german_strength ([cur-soldiers] of german) * ([rof] of german) * ([hit_prob] of german) * phi
     
-    print ([thresh-retreat] of french)
+    ;print ([thresh-retreat] of french)
     
     let german-fight false
     let french-fight false
@@ -690,6 +690,7 @@ end
 
 ;;;;;;;;;; TAXIS ;;;;;;;;;;;;;
 to go-transport
+  let min-dist 1
   
   ;get "next waypoint"
   ;determine which of the next waypoints which will be inside method "next waypoint"
@@ -701,7 +702,7 @@ to go-transport
   
   
   ;check to see if within range of a waypoint
-  if (current-waypoint != 0 and (abs (xcor - ([xcor] of current-waypoint))) < 2 and (abs (ycor - ([ycor] of current-waypoint))) < 2) [
+  if (current-waypoint != 0 and (abs (xcor - ([xcor] of current-waypoint))) < min-dist and (abs (ycor - ([ycor] of current-waypoint))) < min-dist) [
     if (is-unit? current-waypoint) [
       ask current-waypoint [ set-soldiers (cur-soldiers + [current-units] of myself) ]
       ;set returning 1
@@ -803,7 +804,8 @@ to go-transport
     if (transport-type = "person") ;20km/24hrs = 0.833km/hr; 0.6407 patch/hr; 0.01068 patch/min(tick)
     [
       ;fd .2
-      fd 0.01068
+      ;fd 0.01068
+      fd 0.1
     ]
     if (transport-type = "taxi") ; 60km/7hrs = 8.571km/hr; 6.593 patch/hr; 0.1099 patch/min(tick)
     [
@@ -1077,8 +1079,8 @@ to go-french
   if (old-soldiers = 0) [ set old-soldiers cur-soldiers ]
   ;let soldiers-diff (soldiers - old-soldiers) / old-soldiers
   let soldiers-diff winning
-  print "soldiers-diff"
-  print soldiers-diff
+  ;print "soldiers-diff"
+  ;print soldiers-diff
   ;if (need = 0 and soldiers < 900) [
   if (need = 0 and soldiers-diff < need-threshold) [
     ; send back need
@@ -1249,7 +1251,7 @@ CHOOSER
 type-to-add
 type-to-add
 "taxi" "waypoint" "french" "german" "taxi spawner" "train spawner"
-3
+1
 
 BUTTON
 1438
@@ -1383,7 +1385,7 @@ CHOOSER
 path-type
 path-type
 "rail" "road" "footpath"
-0
+2
 
 BUTTON
 180
@@ -1542,7 +1544,7 @@ INPUTBOX
 289
 73
 file-name
-final-1
+final-5
 1
 0
 String
@@ -1612,7 +1614,7 @@ INPUTBOX
 1594
 608
 total-reinforcements
-13600
+4600
 1
 0
 Number
@@ -1660,7 +1662,7 @@ INPUTBOX
 429
 924
 train-capacity
-200
+600
 1
 0
 Number
