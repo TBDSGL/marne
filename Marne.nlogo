@@ -1098,9 +1098,9 @@ to go-french
 end
 
 to go-german
-;  if (ticks mod 25 = 0) [
-;    set-soldiers cur-soldiers + 5
-;  ]
+  if (ticks mod 25 = 0) [
+    set-soldiers cur-soldiers + 40 + random 10
+  ]
 end
 
 
@@ -1246,7 +1246,7 @@ CHOOSER
 type-to-add
 type-to-add
 "taxi" "waypoint" "french" "german" "taxi spawner" "train spawner"
-2
+3
 
 BUTTON
 1438
@@ -1492,7 +1492,7 @@ Number of Soliders
 0.0
 1440.0
 0.0
-70000.0
+80000.0
 false
 false
 "" ""
@@ -1539,7 +1539,7 @@ INPUTBOX
 289
 73
 file-name
-train-path-test
+final-1
 1
 0
 String
@@ -1609,7 +1609,7 @@ INPUTBOX
 1594
 608
 total-reinforcements
--5100
+13600
 1
 0
 Number
