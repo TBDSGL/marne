@@ -706,7 +706,8 @@ to go-transport
     ; Back at Paris
     ifelse (returning = 1 and current-waypoint = 0) [
       ; TODO fix for trains
-      set current-units 5 * taxi-aggro
+      if (transport-type = "taxi") [ set current-units taxi-capacity * taxi-aggro ]
+      if (transport-type = "train") [ set current-units train-capacity ]
       if (total-reinforcements <= 0) [ die ]
       set total-reinforcements (total-reinforcements - current-units)
       set returning 0
@@ -748,6 +749,13 @@ to go-transport
   ]
   if (transport-type = "taxi" and returning = 0) [
     set color blue
+  ]
+  
+  if (transport-type = "train" and returning = 1) [
+    set color yellow
+  ]
+  if (transport-type = "train" and returning = 0) [
+    set color green
   ]
   
   ;change the direction the transport is facing when moving in a certain direction
@@ -998,6 +1006,8 @@ end
 
 
 to go-transport-spawner
+  let aggr 1
+  if (type-to-spawn = "taxi") [ set aggr taxi-aggro ]
   set ticks-to-next-spawn (ticks-to-next-spawn - 1)
   if (ticks-to-next-spawn <= 0 and number-to-spawn > 0) [
     let spawning 1
@@ -1007,7 +1017,7 @@ to go-transport-spawner
     
     if (spawning < 0) [ set spawning 0 ]
     
-    set number-to-spawn (number-to-spawn - (spawning * taxi-aggro))
+    set number-to-spawn (number-to-spawn - (spawning * aggr))
     
     if (type-to-spawn = "taxi") [
       hatch-transports spawning [
@@ -1017,22 +1027,12 @@ to go-transport-spawner
         set current-waypoint 0
         set size 3
         set transport-type "taxi"
-        set current-units 5 * taxi-aggro
+        set current-units taxi-capacity * taxi-aggro
         set total-reinforcements (total-reinforcements - current-units)
         
-        ;change shape of the transport depending on what kind of transport is being modeled
-        if (transport-type = "taxi")
-        [
-          set shape "car right"
-        ]
-        if (transport-type = "train")
-        [
-          set shape "train right"
-        ]
-        if (transport-type = "foot")
-        [
-          set shape "person"
-        ]
+
+        set shape "car right"
+
       ]
     ]
     
@@ -1044,21 +1044,10 @@ to go-transport-spawner
         set current-waypoint 0
         set size 3
         set transport-type "train"
-        set current-units 200
+        set current-units train-capacity
         
-        ;change shape of the transport depending on what kind of transport is being modeled
-        if (transport-type = "taxi")
-        [
-          set shape "car right"
-        ]
-        if (transport-type = "train")
-        [
-          set shape "train right"
-        ]
-        if (transport-type = "foot")
-        [
-          set shape "person"
-        ]
+        set shape "train right"
+
       ]
     ]
     
@@ -1245,7 +1234,7 @@ CHOOSER
 type-to-add
 type-to-add
 "taxi" "waypoint" "french" "german" "taxi spawner" "train spawner"
-4
+1
 
 BUTTON
 1438
@@ -1379,7 +1368,7 @@ CHOOSER
 path-type
 path-type
 "rail" "road" "footpath"
-1
+2
 
 BUTTON
 180
@@ -1646,6 +1635,28 @@ INPUTBOX
 923
 person-aggr
 100
+1
+0
+Number
+
+INPUTBOX
+274
+864
+429
+924
+train-capacity
+200
+1
+0
+Number
+
+INPUTBOX
+453
+869
+608
+929
+taxi-capacity
+5
 1
 0
 Number
