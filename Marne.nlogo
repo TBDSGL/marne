@@ -716,7 +716,6 @@ to go-transport
     
     ; Back at Paris
     ifelse (returning = 1 and current-waypoint = 0) [
-      ; TODO fix for trains
       if (transport-type = "taxi") [ set current-units taxi-capacity * taxi-aggro ]
       if (transport-type = "train") [ set current-units train-capacity ]
       if (total-reinforcements <= 0) [ die ]
@@ -925,15 +924,16 @@ to-report get-next-waypoint [for-transport-type is-returning]
       ; if need, and hasn't been sent
       if (item 2 ? = 1 and item 3 ? = 0) [
         ; send on this path
-        if member? ? appropriate-waypoints [
-          set next-waypoints replace-item index next-waypoints (replace-item 3 (item index next-waypoints) 1)
-          report get-waypoint-by-id item 0 ?
-        ]
+        ;if member? ? appropriate-waypoints [
+        set next-waypoints replace-item index next-waypoints (replace-item 3 (item index next-waypoints) 1)
+        report get-waypoint-by-id item 0 ?
+        ;]
       ]
       set index (index + 1)
     ]
     
     ; If can't find a good waypoint, just choose a random one
+    ;print "Sending randomly"
     report get-waypoint-by-id item 0 (item (random length appropriate-waypoints) appropriate-waypoints)
   ]
 end
