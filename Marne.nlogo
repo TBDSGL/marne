@@ -1,4 +1,4 @@
-extensions [ netsend ]
+;extensions [ netsend ]
 
 globals [
   r-file
@@ -211,7 +211,7 @@ end
 to reset-spawners
   ask transport-spawners [
     if (type-to-spawn = "taxi") [ set number-to-spawn max-taxis ]
-    if (type-to-spawn = "trains") [ set number-to-spawn max-trains ]
+    if (type-to-spawn = "train") [ set number-to-spawn max-trains ]
   ]
 end
 
@@ -1614,7 +1614,7 @@ INPUTBOX
 1594
 608
 total-reinforcements
-4600
+13600
 1
 0
 Number
