@@ -789,6 +789,35 @@ to-report get-next-waypoint-old
   ]
 end
 
+to-report get-appropriate-waypoints [for-transport-type]
+  let appropriate-waypoints []
+  let num-footpath 0
+  let num-road 0
+  let num-rail 0
+  foreach next-waypoints [
+    if (item 1 ? = "footpath") [ set num-footpath (num-footpath + 1) ]
+    if (item 1 ? = "road") [ set num-road (num-road + 1) ]
+    if (item 1 ? = "rail") [ set num-rail (num-rail + 1) ]
+  ]
+  
+  foreach next-waypoints [
+    if (for-transport-type = "train" and ( item 1 ? = "rail" or ( item 1 ? = "footpath" and num-rail = 0 ) )) [
+      set appropriate-waypoints lput ? appropriate-waypoints
+    ]
+    
+    if (for-transport-type = "taxi" and ( item 1 ? = "road" or item 1 ? = "footpath" )) [
+      set appropriate-waypoints lput ? appropriate-waypoints
+    ]
+    
+    if (for-transport-type = "person") [
+      set appropriate-waypoints lput ? appropriate-waypoints
+    ]
+  ]
+  
+  report appropriate-waypoints
+  
+end
+
 to-report get-next-waypoint [for-transport-type is-returning]
   let index 0
   
@@ -796,23 +825,23 @@ to-report get-next-waypoint [for-transport-type is-returning]
   [ if (is-returning = 1) [ report 0 ] ]
   
   ; Only look at waypoints approprate for transport
-  let appropriate-waypoints []
-  foreach next-waypoints [
-    if (for-transport-type = "taxi") [
-      if (item 1 ? = "road" or item 1 ? = "footpath") [
-        set appropriate-waypoints lput ? appropriate-waypoints
-      ]
-    ]
-    if (for-transport-type = "train") [
-      if (item 1 ? = "rail" or item 1 ? = "footpath") [
-        set appropriate-waypoints lput ? appropriate-waypoints
-      ]
-    ]
-    if (for-transport-type = "person") [
-      set appropriate-waypoints next-waypoints
-    ]
-
-  ]
+  let appropriate-waypoints get-appropriate-waypoints for-transport-type
+;  foreach next-waypoints [
+;    if (for-transport-type = "taxi") [
+;      if (item 1 ? = "road" or item 1 ? = "footpath") [
+;        set appropriate-waypoints lput ? appropriate-waypoints
+;      ]
+;    ]
+;    if (for-transport-type = "train") [
+;      if (item 1 ? = "rail" or item 1 ? = "footpath") [
+;        set appropriate-waypoints lput ? appropriate-waypoints
+;      ]
+;    ]
+;    if (for-transport-type = "person") [
+;      set appropriate-waypoints next-waypoints
+;    ]
+;
+;  ]
   
   ifelse length next-waypoints = 0 [
     report 0
@@ -839,14 +868,16 @@ to-report get-next-waypoint [for-transport-type is-returning]
       ; if need, and hasn't been sent
       if (item 2 ? = 1 and item 3 ? = 0) [
         ; send on this path
-        set next-waypoints replace-item index next-waypoints (replace-item 3 (item index next-waypoints) 1)
-        report get-waypoint-by-id item 0 ?
+        if member? ? appropriate-waypoints [
+          set next-waypoints replace-item index next-waypoints (replace-item 3 (item index next-waypoints) 1)
+          report get-waypoint-by-id item 0 ?
+        ]
       ]
       set index (index + 1)
     ]
     
     ; If can't find a good waypoint, just choose a random one
-    report get-waypoint-by-id item 0 (item (random length next-waypoints) next-waypoints)
+    report get-waypoint-by-id item 0 (item (random length appropriate-waypoints) appropriate-waypoints)
   ]
 end
 
@@ -1178,7 +1209,7 @@ CHOOSER
 type-to-add
 type-to-add
 "taxi" "waypoint" "french" "german" "taxi spawner" "train spawner"
-4
+5
 
 BUTTON
 1438
@@ -1312,7 +1343,7 @@ CHOOSER
 path-type
 path-type
 "rail" "road" "footpath"
-1
+2
 
 BUTTON
 180
@@ -1471,7 +1502,7 @@ INPUTBOX
 289
 73
 file-name
-semi-final-6
+train-path-test
 1
 0
 String
