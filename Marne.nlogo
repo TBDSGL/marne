@@ -13,6 +13,7 @@ globals [
   frontline-mid
   referee-no
   myTurtleScale
+  retreat-flag
 ]
 
 directed-link-breed [ waypoint-links waypoint-link ]
@@ -151,7 +152,7 @@ end
 ;; Runs the simulation
 ;; **
 to go
-    set myTurtleScale 5000
+  set myTurtleScale 5000
   ;;ask reds [fd 1 rt random 90 lt random 90]
   ;;ask blues [fd 1 rt random 90 lt random 90]
   ask transports [ go-transport ]
@@ -163,6 +164,10 @@ to go
   ask transport-spawners [ go-transport-spawner] 
   ask waypoint-links [ handle-visible ] 
 
+  print retreat-flag
+  if (retreat-flag = true) [
+    print "RETREAT!!!!"
+  ]
   
   tick
   
@@ -189,8 +194,9 @@ to setup
   set french-color blue
   set german-color red
   set frontline-mid 10
-  set referee-no 7
+  set referee-no 6
   set myTurtleScale 5000
+  set retreat-flag false
   
   setup-frontline
   setup-referee
@@ -205,6 +211,7 @@ end
 to load-form
   import-world file-name
   clear-plot
+  set retreat-flag false
 end
 
 ;;**
@@ -448,7 +455,7 @@ end
 ;; Sets up the referees
 ;;**
 to setup-referee
-  let start_y 20
+  let start_y 20 + 3
   let loopNo 0
   ;;create 10 referees
   while [loopNo < referee-no] [
@@ -462,7 +469,7 @@ to setup-referee
     
     ]
   set loopNo (loopNo + 1)
-  set start_y (start_y - 4)
+  set start_y (start_y - 5)
   ]
 end
 
@@ -481,7 +488,7 @@ end
 to go-referee
   
   let alpha .001
-  let phi .001
+  let phi .002
   
   if (french != 0 and german != 0) [
     let french_strength ([cur-soldiers] of french) * ([rof] of french) * ([hit_prob] of french) * alpha
@@ -501,11 +508,11 @@ to go-referee
     ]
     
     if (french-fight = true) [
-      ask german [set-soldiers (cur-soldiers - french_strength)]
+      ask german [set-soldiers (cur-soldiers - french_strength / 10)]
     ]
     
     if (german-fight = true) [
-      ask french [set-soldiers (cur-soldiers - german_strength)]
+      ask french [set-soldiers (cur-soldiers - german_strength / 10)]
     ]
           
     
@@ -519,7 +526,7 @@ to go-referee
     
     let french-str [cur-soldiers] of french
     let german-str [cur-soldiers] of german
-    ask referee_neighbors [set-frontline_arrow-direction (french-str - german-str) / 1000 ]
+    ask referee_neighbors [set-frontline_arrow-direction (french-str - german-str) / 10000 ]
     ask french [ set winning (french-str - german-str) / 1000 ]
   ]
   
@@ -553,7 +560,14 @@ end
 
 to-report total-french
   let val 0
+  let retreat-total 0
   ask units [if team = "french" [set val (val + cur-soldiers)] ]  
+  ask units [if (team = "french" and (cur-soldiers / org-soldiers < thresh-retreat)) [set retreat-total (retreat-total + 1) ] ]
+  
+  if (retreat-total = referee-no ) [
+    set retreat-flag true
+  ]
+  
   report val
 end
 
@@ -568,11 +582,11 @@ end
 ;; Sets up the front line
 ;;**
 to setup-frontline
-  let start_y 22
+  let start_y 20 + 3 + 5 / 2 
   let loopNo 0
   ;;create 10 arrows
   while [loopNo < referee-no - 1 ] [
-    set start_y (start_y - 4)
+    set start_y (start_y - 5)
     create-frontline_arrows 1 [
     set color german-color
     set heading 90 ;;0 is north, 90 is east, etc
@@ -967,12 +981,12 @@ end
 to go-transport-spawner
   set ticks-to-next-spawn (ticks-to-next-spawn - 1)
   if (ticks-to-next-spawn <= 0 and number-to-spawn > 0) [
-    let spawning 1
+    let spawning 1 * taxi-aggro
     if (spawn-sequentially = false) [
       set spawning number-to-spawn
     ]
     
-    set number-to-spawn (number-to-spawn - spawning)
+    set number-to-spawn (number-to-spawn - spawning * taxi-aggro)
     
     if (type-to-spawn = "taxi") [
       hatch-transports spawning [
@@ -982,7 +996,7 @@ to go-transport-spawner
         set current-waypoint 0
         set size 3
         set transport-type "taxi"
-        set current-units random 20
+        set current-units random 20 * taxi-aggro
         
         ;change shape of the transport depending on what kind of transport is being modeled
         if (transport-type = "taxi")
@@ -1052,12 +1066,12 @@ to go-french
   ]
   set label need
   
-;  ;;temp debug for reinforce
-;  if (ticks mod 25 = 0) [ 
-;    let temp random 3
-;    set-soldiers cur-soldiers + temp
-;  ]
-;  set old-soldiers cur-soldiers
+  ;;temp debug for reinforce
+  if (ticks mod 25 = 0) [ 
+    let temp random 3
+    set-soldiers cur-soldiers - temp
+  ]
+  set old-soldiers cur-soldiers
 end
 
 to go-german
@@ -1405,7 +1419,7 @@ max-taxis
 max-taxis
 0
 600
-600
+592
 1
 1
 taxis
@@ -1455,7 +1469,7 @@ Number of Soliders
 0.0
 1440.0
 0.0
-157500.0
+70000.0
 false
 false
 "" ""
@@ -1560,7 +1574,44 @@ max-trains
 max-trains
 0
 10
-4
+0
+1
+1
+NIL
+HORIZONTAL
+
+INPUTBOX
+1439
+548
+1594
+608
+total-reinforcements
+0
+1
+0
+Number
+
+MONITOR
+258
+253
+336
+298
+NIL
+retreat-flag
+17
+1
+11
+
+SLIDER
+93
+827
+265
+860
+taxi-aggro
+taxi-aggro
+0
+40
+20
 1
 1
 NIL
