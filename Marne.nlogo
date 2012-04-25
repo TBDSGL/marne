@@ -60,6 +60,7 @@ transports-own [
   current-waypoint
   capacity
   current-units
+  returning
 ]
 
 transport-spawners-own [
@@ -677,31 +678,42 @@ to go-transport
   if (current-waypoint != 0 and (abs (xcor - ([xcor] of current-waypoint))) < 2 and (abs (ycor - ([ycor] of current-waypoint))) < 2) [
     if (is-unit? current-waypoint) [
       ask current-waypoint [ set-soldiers (cur-soldiers + [current-units] of myself) ]
-      die
+      set returning 1
+      set current-units 0
+      ; die
     ]
     ;if only one next one, simply use the next one
     let old-waypoint current-waypoint
-    set current-waypoint [get-next-waypoint ([transport-type] of myself)] of current-waypoint
+    set current-waypoint [get-next-waypoint ([transport-type] of myself) ([returning] of myself)] of current-waypoint
     let next-path-type 0
-    foreach ([next-waypoints] of old-waypoint) [
-      print "test"
-      print ?
-      print [id] of current-waypoint
-      if (item 0 ? = [id] of current-waypoint) [ set next-path-type item 1 ? ]
-      print next-path-type
-    ]
-    if ((transport-type = "taxi" or transport-type = "train") and next-path-type = "footpath") [
-      ;let people-to-spawn 
-      hatch-transports 1 [
-        ;set xcor [xcor] of myself
-        ;set ycor [ycor] of myself
-        ;set path path-number
-        set current-waypoint [current-waypoint] of myself
-        set size 2
-        set transport-type "person"
-        set current-units [current-units] of myself
+    
+    ; Back at Paris
+    ifelse (returning = 1 and current-waypoint = 0) [
+      set current-units 10
+      set returning 0
+      set current-waypoint 0
+    ] [
+    
+      foreach ([next-waypoints] of old-waypoint) [
+        print "test"
+        print ?
+        print [id] of current-waypoint
+        if (item 0 ? = [id] of current-waypoint) [ set next-path-type item 1 ? ]
+        print next-path-type
       ]
-      die
+      if ((transport-type = "taxi" or transport-type = "train") and next-path-type = "footpath") [
+        ;let people-to-spawn 
+        hatch-transports 1 [
+          ;set xcor [xcor] of myself
+          ;set ycor [ycor] of myself
+          ;set path path-number
+          set current-waypoint [current-waypoint] of myself
+          set size 2
+          set transport-type "person"
+          set current-units [current-units] of myself
+        ]
+        die
+      ]
     ]
   ]
   
@@ -777,8 +789,11 @@ to-report get-next-waypoint-old
   ]
 end
 
-to-report get-next-waypoint [for-transport-type]
+to-report get-next-waypoint [for-transport-type is-returning]
   let index 0
+  
+  ifelse (is-returning = 1 and length previous-waypoints >= 1) [ report get-waypoint-by-id item 0 previous-waypoints ]
+  [ if (is-returning = 1) [ report 0 ] ]
   
   ; Only look at waypoints approprate for transport
   let appropriate-waypoints []
@@ -1163,7 +1178,7 @@ CHOOSER
 type-to-add
 type-to-add
 "taxi" "waypoint" "french" "german" "taxi spawner" "train spawner"
-2
+4
 
 BUTTON
 1438
@@ -1297,7 +1312,7 @@ CHOOSER
 path-type
 path-type
 "rail" "road" "footpath"
-0
+1
 
 BUTTON
 180
@@ -1456,7 +1471,7 @@ INPUTBOX
 289
 73
 file-name
-battle-testing
+semi-final-6
 1
 0
 String
@@ -1467,7 +1482,7 @@ INPUTBOX
 1543
 77
 unit-soldier-count
-14000
+13200
 1
 0
 Number
@@ -1478,7 +1493,7 @@ INPUTBOX
 1544
 148
 unit-rof
-10
+5
 1
 0
 Number
@@ -1489,7 +1504,7 @@ INPUTBOX
 1591
 219
 unit-hit-prob
-0.5
+0.75
 1
 0
 Number
@@ -1500,7 +1515,7 @@ INPUTBOX
 1592
 287
 unit-ammo-per-soldier
-10
+75
 1
 0
 Number
@@ -1514,7 +1529,7 @@ max-trains
 max-trains
 0
 10
-10
+4
 1
 1
 NIL
