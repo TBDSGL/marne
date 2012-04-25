@@ -703,7 +703,8 @@ to go-transport
     
     ; Back at Paris
     ifelse (returning = 1 and current-waypoint = 0) [
-      set current-units 10
+      ; TODO fix for trains
+      set current-units 10 * taxi-aggro
       set returning 0
       set current-waypoint 0
     ] [
@@ -729,6 +730,13 @@ to go-transport
         die
       ]
     ]
+  ]
+  
+  if (transport-type = "taxi" and returning = 1) [
+    set color yellow
+  ]
+  if (transport-type = "taxi" and returning = 0) [
+    set color blue
   ]
   
   ;change the direction the transport is facing when moving in a certain direction
@@ -981,12 +989,14 @@ end
 to go-transport-spawner
   set ticks-to-next-spawn (ticks-to-next-spawn - 1)
   if (ticks-to-next-spawn <= 0 and number-to-spawn > 0) [
-    let spawning 1 * taxi-aggro
+    let spawning 1
     if (spawn-sequentially = false) [
       set spawning number-to-spawn
     ]
     
-    set number-to-spawn (number-to-spawn - spawning * taxi-aggro)
+    if (spawning < 0) [ set spawning 0 ]
+    
+    set number-to-spawn (number-to-spawn - (spawning * taxi-aggro))
     
     if (type-to-spawn = "taxi") [
       hatch-transports spawning [
@@ -996,7 +1006,7 @@ to go-transport-spawner
         set current-waypoint 0
         set size 3
         set transport-type "taxi"
-        set current-units random 20 * taxi-aggro
+        set current-units 10 * taxi-aggro
         
         ;change shape of the transport depending on what kind of transport is being modeled
         if (transport-type = "taxi")
@@ -1223,7 +1233,7 @@ CHOOSER
 type-to-add
 type-to-add
 "taxi" "waypoint" "french" "german" "taxi spawner" "train spawner"
-5
+4
 
 BUTTON
 1438
@@ -1357,7 +1367,7 @@ CHOOSER
 path-type
 path-type
 "rail" "road" "footpath"
-2
+1
 
 BUTTON
 180
@@ -1419,7 +1429,7 @@ max-taxis
 max-taxis
 0
 600
-592
+600
 1
 1
 taxis
@@ -1610,8 +1620,8 @@ SLIDER
 taxi-aggro
 taxi-aggro
 0
-40
-20
+200
+60
 1
 1
 NIL
