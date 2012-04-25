@@ -1290,10 +1290,10 @@ NIL
 1
 
 INPUTBOX
-14
-499
-169
-559
+1025
+913
+1180
+973
 path-number
 2
 1
@@ -1301,10 +1301,10 @@ path-number
 Number
 
 BUTTON
-182
-512
-335
-545
+1193
+926
+1346
+959
 NIL
 add-waypoint
 T
@@ -1318,10 +1318,10 @@ NIL
 1
 
 BUTTON
-181
-580
-335
-613
+1192
+994
+1346
+1027
 NIL
 reset-last-waypoint
 NIL
@@ -1335,10 +1335,10 @@ NIL
 1
 
 INPUTBOX
-13
-565
-168
-625
+1024
+979
+1179
+1039
 last-placed-waypoint
 0
 1
@@ -1363,10 +1363,10 @@ NIL
 1
 
 BUTTON
-180
-641
-338
-674
+197
+512
+355
+545
 NIL
 associate-waypoints
 T
@@ -1380,20 +1380,20 @@ NIL
 1
 
 CHOOSER
-13
-637
-168
-682
+30
+508
+185
+553
 path-type
 path-type
 "rail" "road" "footpath"
 2
 
 BUTTON
-180
-686
-341
-719
+197
+557
+358
+590
 NIL
 associate-referees
 T
@@ -1633,10 +1633,10 @@ retreat-flag
 11
 
 SLIDER
-93
-827
-265
-860
+8
+611
+180
+644
 taxi-aggro
 taxi-aggro
 0
@@ -1648,10 +1648,10 @@ NIL
 HORIZONTAL
 
 INPUTBOX
-95
-863
-250
-923
+10
+647
+165
+707
 person-aggr
 100
 1
@@ -1659,10 +1659,10 @@ person-aggr
 Number
 
 INPUTBOX
-274
-864
-429
-924
+189
+648
+344
+708
 train-capacity
 600
 1
@@ -1670,10 +1670,10 @@ train-capacity
 Number
 
 INPUTBOX
-453
-869
-608
-929
+190
+717
+345
+777
 taxi-capacity
 5
 1
@@ -1741,6 +1741,16 @@ german-reinforce
 1
 NIL
 HORIZONTAL
+
+TEXTBOX
+1028
+894
+1178
+912
+Old. Don't Use These
+11
+0.0
+0
 
 @#$#@#$#@
 ## WHAT IS IT?
