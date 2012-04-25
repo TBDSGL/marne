@@ -497,7 +497,7 @@ end
 to go-referee
   
   let alpha .001
-  let phi .002
+  let phi .003
   
   if (french != 0 and german != 0) [
     let french_strength ([cur-soldiers] of french) * ([rof] of french) * ([hit_prob] of french) * alpha
@@ -637,9 +637,9 @@ to go-frontline_arrow
   
   if (direction > 0) ;;french winning
   [
-    if (xcor < frontline-mid + 10 and xcor > frontline-mid - 10)
+    if ((xcor + direction + 1) < frontline-mid + 10 and xcor > frontline-mid - 10)
     [
-      forward direction
+      set xcor (xcor + direction)
     ]
     set color french-color
     set heading 90
@@ -649,9 +649,10 @@ to go-frontline_arrow
   ]
   if (direction < 0) ;;germans winning
   [
-    if (xcor < frontline-mid + 10 and xcor > 0)
+    if (xcor + direction - 1 > frontline-mid - 10)
     [
-      forward -1 * direction
+      set xcor (xcor + direction)
+      ;forward direction
     ]
     set color german-color
     set heading 270
@@ -672,8 +673,8 @@ to go-frontline_arrow
 end
 
 to set-frontline_arrow-direction [myDirection]
-  set direction 0
-  set direction direction + myDirection
+  ;set direction 0
+  set direction myDirection;direction + myDirection
   
   ;if (direction > 0)
   ;[
