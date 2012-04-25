@@ -687,6 +687,7 @@ end
 
 ;;;;;;;;;; TAXIS ;;;;;;;;;;;;;
 to go-transport
+  let min-dist 1
   
   ;get "next waypoint"
   ;determine which of the next waypoints which will be inside method "next waypoint"
@@ -698,7 +699,7 @@ to go-transport
   
   
   ;check to see if within range of a waypoint
-  if (current-waypoint != 0 and (abs (xcor - ([xcor] of current-waypoint))) < 2 and (abs (ycor - ([ycor] of current-waypoint))) < 2) [
+  if (current-waypoint != 0 and (abs (xcor - ([xcor] of current-waypoint))) < min-dist and (abs (ycor - ([ycor] of current-waypoint))) < min-dist) [
     if (is-unit? current-waypoint) [
       ask current-waypoint [ set-soldiers (cur-soldiers + [current-units] of myself) ]
       ;set returning 1
@@ -1246,7 +1247,7 @@ CHOOSER
 type-to-add
 type-to-add
 "taxi" "waypoint" "french" "german" "taxi spawner" "train spawner"
-3
+1
 
 BUTTON
 1438
@@ -1380,7 +1381,7 @@ CHOOSER
 path-type
 path-type
 "rail" "road" "footpath"
-0
+2
 
 BUTTON
 180
@@ -1539,7 +1540,7 @@ INPUTBOX
 289
 73
 file-name
-final-1
+final-4
 1
 0
 String
