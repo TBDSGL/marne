@@ -501,46 +501,47 @@ to go-referee
   let alpha french-effect / 1000
   let phi german-effect / 1000
   
-  if (french != 0 and german != 0) [
-    let french_strength ([cur-soldiers] of french) * ([rof] of french) * ([hit_prob] of french) * alpha
-    let german_strength ([cur-soldiers] of german) * ([rof] of german) * ([hit_prob] of german) * phi
-    
-    ;print ([thresh-retreat] of french)
-    
-    let german-fight false
-    let french-fight false
-    
-    if ([cur-soldiers] of french / [org-soldiers] of french > [thresh-retreat] of french) [
-      set french-fight true
+  if (ticks <= 420 or ticks >= 1200) [
+    if (french != 0 and german != 0) [
+      let french_strength ([cur-soldiers] of french) * ([rof] of french) * ([hit_prob] of french) * alpha
+      let german_strength ([cur-soldiers] of german) * ([rof] of german) * ([hit_prob] of german) * phi
+      
+      ;print ([thresh-retreat] of french)
+      
+      let german-fight false
+      let french-fight false
+      
+      if ([cur-soldiers] of french / [org-soldiers] of french > [thresh-retreat] of french) [
+        set french-fight true
+      ]
+      
+      if ([cur-soldiers] of german / [org-soldiers] of german > [thresh-retreat] of german) [
+        set german-fight true
+      ]
+      
+      if (french-fight = true) [
+        ask german [set-soldiers (cur-soldiers - french_strength / 10)]
+      ]
+      
+      if (german-fight = true) [
+        ask french [set-soldiers (cur-soldiers - german_strength / 10)]
+      ]
+      
+      
+      if ([cur-soldiers] of french < 0) [
+        ask french [set-soldiers 0]
+      ]
+      
+      if ([cur-soldiers] of german < 0) [
+        ask german [set-soldiers 0]
+      ]
+      
+      let french-str [cur-soldiers] of french
+      let german-str [cur-soldiers] of german
+      ask referee_neighbors [set-frontline_arrow-direction (french-str - german-str) / 10000 ]
+      ask french [ set winning (french-str - german-str) / 1000 ]
     ]
-    
-    if ([cur-soldiers] of german / [org-soldiers] of german > [thresh-retreat] of german) [
-      set german-fight true
-    ]
-    
-    if (french-fight = true) [
-      ask german [set-soldiers (cur-soldiers - french_strength / 10)]
-    ]
-    
-    if (german-fight = true) [
-      ask french [set-soldiers (cur-soldiers - german_strength / 10)]
-    ]
-          
-    
-    if ([cur-soldiers] of french < 0) [
-      ask french [set-soldiers 0]
-    ]
-    
-    if ([cur-soldiers] of german < 0) [
-      ask german [set-soldiers 0]
-    ]
-    
-    let french-str [cur-soldiers] of french
-    let german-str [cur-soldiers] of german
-    ask referee_neighbors [set-frontline_arrow-direction (french-str - german-str) / 10000 ]
-    ask french [ set winning (french-str - german-str) / 1000 ]
   ]
-  
 end
 
 ;; Sets assocation between referees to a unit (click referee first, then unit)
@@ -636,41 +637,42 @@ end
 ;; Runs the frontline arrows and moves them accordingly
 ;;**
 to go-frontline_arrow 
-  
-  if (direction > 0) ;;french winning
-  [
-    if ((xcor + direction + 1) < frontline-mid + 10 and xcor > frontline-mid - 10)
+  if (ticks <= 420 or ticks >= 1200) [
+    if (direction > 0) ;;french winning
     [
-      set xcor (xcor + direction)
+      if ((xcor + direction + 1) < frontline-mid + 10 and xcor > frontline-mid - 10)
+      [
+        set xcor (xcor + direction)
+      ]
+      set color french-color
+      set heading 90
+      
+      ;;set pen-size 3
+      ;;pen-erase
     ]
-    set color french-color
-    set heading 90
+    if (direction < 0) ;;germans winning
+    [
+      if (xcor + direction - 1 > frontline-mid - 10)
+      [
+        set xcor (xcor + direction)
+        ;forward direction
+      ]
+      set color german-color
+      set heading 270
+    ]
     
-    ;;set pen-size 3
-    ;;pen-erase
-  ]
-  if (direction < 0) ;;germans winning
-  [
-    if (xcor + direction - 1 > frontline-mid - 10)
+    if (xcor > frontline-mid)
     [
-      set xcor (xcor + direction)
-      ;forward direction
+      set pen-size 2
+      pd
+      set color french-color
     ]
-    set color german-color
-    set heading 270
-  ]
-  
-  if (xcor > frontline-mid)
-  [
-    set pen-size 2
-    pd
-    set color french-color
-  ]
-  if (xcor < frontline-mid)
-  [
-    set pen-size 2
-    pd
-    set color german-color
+    if (xcor < frontline-mid)
+    [
+      set pen-size 2
+      pd
+      set color german-color
+    ]
   ]
 end
 
