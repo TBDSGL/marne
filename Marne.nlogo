@@ -173,6 +173,8 @@ to go
   
   if (ticks mod 10 = 0) [ask turtles [send-position]]
   
+  if (ticks >= 720) [stop]
+  
 end
 
 ;;**
@@ -496,8 +498,8 @@ end
 ;;**
 to go-referee
   
-  let alpha .001
-  let phi .003
+  let alpha french-effect / 1000
+  let phi german-effect / 1000
   
   if (french != 0 and german != 0) [
     let french_strength ([cur-soldiers] of french) * ([rof] of french) * ([hit_prob] of french) * alpha
@@ -1491,7 +1493,7 @@ Total Soldiers: French vs Germans
 Time
 Number of Soliders
 0.0
-1440.0
+720.0
 0.0
 80000.0
 false
@@ -1690,6 +1692,36 @@ NIL
 NIL
 NIL
 1
+
+SLIDER
+1442
+659
+1614
+692
+german-effect
+german-effect
+.5
+10
+2
+.5
+1
+NIL
+HORIZONTAL
+
+SLIDER
+1442
+699
+1614
+732
+french-effect
+french-effect
+.5
+10
+1
+.5
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
