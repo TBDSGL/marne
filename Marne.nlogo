@@ -1755,39 +1755,51 @@ Old. Don't Use These
 @#$#@#$#@
 ## WHAT IS IT?
 
-(a general understanding of what the model is trying to show or explain)
+The battle of the Ourcq in 1914 is part of the battle of the Marne. The war begun at Sep. 5th when French 6th Army engaged German 1st Army on Sept 5th and resulted in a German retreat on Sept 9th due to the gap between German 1st and 2nd Army. This model will focus on the reinforcement on both sides from Sept 6th to Sept 7th. According to history, French uses taxis to transfer 7th infantry division to join the battle on 7th. In this model, we include those could be transferred in a day, and different path and scenario for transportation. 
 
 ## HOW IT WORKS
 
-(what rules the agents use to create the overall behavior of the model)
+Units on the front operate independently and make their own decision to request reinforcements. Requests are made asynchronously whenever a unit falls into a state of “need”. Reinforcements follow the path of “neediness”. The Germans are reinforced based on a historical reinforcement pattern (though this can be toggled as well). Ultimately, they will continue sending reinforcements until there are no more reinforcement vectors to use (and will resume when they become available again) or when there are no more reinforcement units to draw upon. 
+
+The reinforcement vectors available from the start are taxis and trains. The engagement model is based off of a RAND model called “Bunker Hill,” which takes observable quantities, like troop size, hit probabilities, and ammunition, and factors them into a model of attrition. 
+
+The network component feeds troops into the engagement component, which signals the supply chain when it is running low on soldiers. A threshold for retreat was designed by taking casualty rates for small engagements. We plotted a 2D graph of casualty rates and initial troop mass for these engagements and fitted a OLS regression from it. This function was then used to inform the retreat threshold. The argument is that most units would not have fought to extermination, and the casualty rates represents the upper bound of tolerance for units before they break. 
+
 
 ## HOW TO USE IT
 
-(how to use the model, including a description of each of the items in the Interface tab)
+Load the Marne file, then load the final-5 file, which holds the setup and initial conditions for all values. Do this for each run of the model. You can alter most variables, including the engagement model terms as well as some spawning, and flow for the network/supply chain component (the taxi, train variables etc.). If you modify the max-taxis or max-trains, be sure to click “reset-spawners” before beginning execution. Upon your satisfaction, execute the model by pressing “go.” The model will run until the end of the termination time (a full 32 hours). This includes a 13 hour break in the fighting in the middle of the simulation (where soldiers ceased combat operations at night). 
 
 ## THINGS TO NOTICE
 
-(suggested things for the user to notice while running the model)
+We added a German reinforcement percentage slider. Although our model is a Mission-centric framework (from the DoD modeling best-practices framework triangle), and we do not explicitly model theater wide decision making, this slider allows us to run scenarios where a higher command has dedicated more reserves to our area of the battlescape. 
 
 ## THINGS TO TRY
 
-(suggested things for the user to try to do (move sliders, switches, etc.) with the model)
+Try altering the control variables for Germany and France in a fixed ratio, (2:1) for example. Notice that only for one of these combinations, does Germany win (eventually before the simulation terminates). Thus, the uncaptured dynamics is obviously not linear. Further, it’s difficult to find scenario from a value combination where Germany doesn’t win quickly (if it wins at all). 
 
 ## EXTENDING THE MODEL
 
-(suggested things to add or change in the Code tab to make the model more complicated, detailed, accurate, etc.)
+The model can be extended in several ways, most notably by changing the functional form for the engagement model to represent more factors. Currently, the Bunker HIll form has a multiplicative control form which represents reserve/aggression. From a modeling perspective, this term captures all the dynamics of the data that isn’t captured by the explicit terms themselves. Hence, an extension can come up with a more complicated engagement form and/or even change the utility to represent a more complicated objective/goal for the respective armies. 
+
+Beyond this the networking model can add a warehousing factor, which would make it more in line with other supply-chain models, as well as options to change the node-decision logic. 
 
 ## NETLOGO FEATURES
 
-(interesting or unusual features of NetLogo that the model uses, particularly in the Code tab; or where workarounds were needed for missing features)
-
-## RELATED MODELS
-
-(models in the NetLogo Models Library and elsewhere which are of related interest)
+The model was originally going to have a feature that would send data over a WiFi network to a connected iPad running visualization software. A large part of this feature was completed and can be seen in the NetSend extension folder that was custom-written for the model. The netsend command can be used by running [netsend:send key value] (replacing “key” with a string and “value” with a number). The extension launches a small HTTP server on port 8080. A request can be made to the server in the form of http://localhost:8080/?tick=0 where the tick parameter can be set so that only data after that tick is sent. The extension then returns all logged data in plaintext with ticks, agent ids, keys, and values. The uncompleted iPad application can also be seen in the other/MarneMap folder.
 
 ## CREDITS AND REFERENCES
 
-(a reference to the model's URL on the web if it has one, as well as any other necessary credits, citations, and links)
+Unit data from: 
+Osprey, Men-at-Arms #286 - The French Army 1914-18 (1995)
+Osprey, Men-at-Arms #394 The German Army in World War I 1914-15 (2003)
+Osprey, The First Battle of the Marne 1914, Ian Summer
+
+GIS data from:
+http://www.diva-gis.org/gdata
+Maps from: 
+A Military Atlas of the First World War
+[Guides Michelin]  Battle Fields Of The Marne -The Ourcq - Chantilly, Senlis, Meaux
 @#$#@#$#@
 default
 true
