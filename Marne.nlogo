@@ -206,6 +206,13 @@ to setup
   reset-ticks
 end
 
+to reset-spawners
+  ask transport-spawners [
+    if (type-to-spawn = "taxi") [ set number-to-spawn max-taxis ]
+    if (type-to-spawn = "trains") [ set number-to-spawn max-trains ]
+  ]
+end
+
 ;;**
 ;; Loads the data
 ;;**
@@ -789,17 +796,21 @@ to go-transport
   ;print next-waypoint
   if current-waypoint != 0 [
     set heading atan (([xcor] of current-waypoint) - xcor) (([ycor] of current-waypoint) - ycor)
-    if (transport-type = "person")
+    ; 10pixels = 1km; 13 pixels = 1 patch; 1 patch = 
+    if (transport-type = "person") ;20km/24hrs = 0.833km/hr; 0.6407 patch/hr; 0.01068 patch/min(tick)
     [
-      fd .2
+      ;fd .2
+      fd 0.01068
     ]
-    if (transport-type = "taxi")
+    if (transport-type = "taxi") ; 60km/7hrs = 8.571km/hr; 6.593 patch/hr; 0.1099 patch/min(tick)
     [
-      fd 1
+      ;fd 1
+      fd 0.1099
     ]
-    if (transport-type = "train")
+    if (transport-type = "train") ; 10mi/hr = 16.09km/hr; 12.377 patch/hr;  0.206 patch/min(tick)
     [
-      fd 2
+      ;fd 2
+      fd 0.206
     ]
   ]
 end
@@ -1235,7 +1246,7 @@ CHOOSER
 type-to-add
 type-to-add
 "taxi" "waypoint" "french" "german" "taxi spawner" "train spawner"
-5
+2
 
 BUTTON
 1438
@@ -1369,7 +1380,7 @@ CHOOSER
 path-type
 path-type
 "rail" "road" "footpath"
-2
+0
 
 BUTTON
 180
@@ -1455,7 +1466,7 @@ SWITCH
 441
 show-roads
 show-roads
-0
+1
 1
 -1000
 
@@ -1598,7 +1609,7 @@ INPUTBOX
 1594
 608
 total-reinforcements
-0
+-5100
 1
 0
 Number
@@ -1646,7 +1657,7 @@ INPUTBOX
 429
 924
 train-capacity
-2000
+200
 1
 0
 Number
@@ -1661,6 +1672,23 @@ taxi-capacity
 1
 0
 Number
+
+BUTTON
+219
+454
+347
+487
+NIL
+reset-spawners
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
