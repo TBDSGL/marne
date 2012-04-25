@@ -173,7 +173,7 @@ to go
   
   if (ticks mod 10 = 0) [ask turtles [send-position]]
   
-  if (ticks >= 720) [stop]
+  if (ticks >= 1920) [stop]
   
 end
 
@@ -1497,7 +1497,7 @@ Total Soldiers: French vs Germans
 Time
 Number of Soliders
 0.0
-720.0
+1920.0
 0.0
 80000.0
 false
