@@ -1106,7 +1106,7 @@ end
 
 to go-german
   if (ticks mod 25 = 0) [
-    set-soldiers cur-soldiers + 40 + random 10
+    set-soldiers cur-soldiers + 50 * german-reinforce / 100 + random 5
   ]
 end
 
@@ -1616,7 +1616,7 @@ INPUTBOX
 1594
 608
 total-reinforcements
-13600
+0
 1
 0
 Number
@@ -1723,6 +1723,21 @@ french-effect
 10
 1
 .5
+1
+NIL
+HORIZONTAL
+
+SLIDER
+1445
+744
+1617
+777
+german-reinforce
+german-reinforce
+0
+100
+29
+1
 1
 NIL
 HORIZONTAL
