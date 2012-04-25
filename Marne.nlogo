@@ -694,9 +694,9 @@ to go-transport
   if (current-waypoint != 0 and (abs (xcor - ([xcor] of current-waypoint))) < 2 and (abs (ycor - ([ycor] of current-waypoint))) < 2) [
     if (is-unit? current-waypoint) [
       ask current-waypoint [ set-soldiers (cur-soldiers + [current-units] of myself) ]
-      set returning 1
-      set current-units 0
-      ; die
+      ;set returning 1
+      ;set current-units 0
+      die
     ]
     ;if only one next one, simply use the next one
     let old-waypoint current-waypoint
@@ -716,24 +716,29 @@ to go-transport
     ] [
     
       foreach ([next-waypoints] of old-waypoint) [
-        print "test"
-        print ?
-        print [id] of current-waypoint
+        ;print "test"
+        ;print ?
+        ;print [id] of current-waypoint
         if (item 0 ? = [id] of current-waypoint) [ set next-path-type item 1 ? ]
-        print next-path-type
+        ;print next-path-type
       ]
       if ((transport-type = "taxi" or transport-type = "train") and next-path-type = "footpath") [
-        ;let people-to-spawn 
-        hatch-transports 1 [
+        let people-to-spawn current-units / person-aggr
+        hatch-transports people-to-spawn [
           ;set xcor [xcor] of myself
           ;set ycor [ycor] of myself
           ;set path path-number
           set current-waypoint [current-waypoint] of myself
-          set size 2
           set transport-type "person"
-          set current-units [current-units] of myself
+          set size 2
+          
+          ;set current-units [current-units] of myself
+          set current-units person-aggr
         ]
-        die
+        ;die
+        set returning 1
+        set current-units 0
+        set current-waypoint 0
       ]
     ]
   ]
@@ -1240,7 +1245,7 @@ CHOOSER
 type-to-add
 type-to-add
 "taxi" "waypoint" "french" "german" "taxi spawner" "train spawner"
-2
+4
 
 BUTTON
 1438
@@ -1460,7 +1465,7 @@ SWITCH
 441
 show-roads
 show-roads
-1
+0
 1
 -1000
 
@@ -1591,7 +1596,7 @@ max-trains
 max-trains
 0
 10
-0
+10
 1
 1
 NIL
@@ -1603,7 +1608,7 @@ INPUTBOX
 1594
 608
 total-reinforcements
-0
+13600
 1
 0
 Number
@@ -1633,6 +1638,17 @@ taxi-aggro
 1
 NIL
 HORIZONTAL
+
+INPUTBOX
+95
+863
+250
+923
+person-aggr
+100
+1
+0
+Number
 
 @#$#@#$#@
 ## WHAT IS IT?
