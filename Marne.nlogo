@@ -1045,6 +1045,7 @@ to go-transport-spawner
         set size 3
         set transport-type "train"
         set current-units train-capacity
+        set total-reinforcements (total-reinforcements - current-units)
         
         set shape "train right"
 
@@ -1234,7 +1235,7 @@ CHOOSER
 type-to-add
 type-to-add
 "taxi" "waypoint" "french" "german" "taxi spawner" "train spawner"
-1
+5
 
 BUTTON
 1438
@@ -1597,7 +1598,7 @@ INPUTBOX
 1594
 608
 total-reinforcements
-13600
+0
 1
 0
 Number
@@ -1645,7 +1646,7 @@ INPUTBOX
 429
 924
 train-capacity
-200
+2000
 1
 0
 Number
