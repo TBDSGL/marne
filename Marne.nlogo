@@ -193,7 +193,7 @@ to setup
   ;;***GLOBAL SETUP INFORMATION HERE***
   set french-color blue
   set german-color red
-  set frontline-mid 12
+  set frontline-mid 10
   set referee-no 6
   set myTurtleScale 5000
   set retreat-flag false
@@ -455,7 +455,7 @@ end
 ;; Sets up the referees
 ;;**
 to setup-referee
-  let start_y 20 + 5
+  let start_y 20 + 3
   let loopNo 0
   ;;create 10 referees
   while [loopNo < referee-no] [
@@ -582,7 +582,7 @@ end
 ;; Sets up the front line
 ;;**
 to setup-frontline
-  let start_y 20 + 5 / 2
+  let start_y 20 + 3 + 5 / 2 
   let loopNo 0
   ;;create 10 arrows
   while [loopNo < referee-no - 1 ] [
@@ -952,12 +952,12 @@ end
 to go-transport-spawner
   set ticks-to-next-spawn (ticks-to-next-spawn - 1)
   if (ticks-to-next-spawn <= 0 and number-to-spawn > 0) [
-    let spawning 1
+    let spawning 1 * taxi-aggro
     if (spawn-sequentially = false) [
       set spawning number-to-spawn
     ]
     
-    set number-to-spawn (number-to-spawn - spawning)
+    set number-to-spawn (number-to-spawn - spawning * taxi-aggro)
     
     if (type-to-spawn = "taxi") [
       hatch-transports spawning [
@@ -967,7 +967,7 @@ to go-transport-spawner
         set current-waypoint 0
         set size 3
         set transport-type "taxi"
-        set current-units random 20
+        set current-units random 20 * taxi-aggro
         
         ;change shape of the transport depending on what kind of transport is being modeled
         if (transport-type = "taxi")
@@ -1194,7 +1194,7 @@ CHOOSER
 type-to-add
 type-to-add
 "taxi" "waypoint" "french" "german" "taxi spawner" "train spawner"
-3
+5
 
 BUTTON
 1438
@@ -1390,7 +1390,7 @@ max-taxis
 max-taxis
 0
 600
-600
+592
 1
 1
 taxis
@@ -1545,7 +1545,7 @@ max-trains
 max-trains
 0
 10
-4
+0
 1
 1
 NIL
@@ -1572,6 +1572,21 @@ retreat-flag
 17
 1
 11
+
+SLIDER
+93
+827
+265
+860
+taxi-aggro
+taxi-aggro
+0
+40
+20
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
