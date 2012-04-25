@@ -197,6 +197,7 @@ to setup
   set referee-no 6
   set myTurtleScale 5000
   set retreat-flag false
+  set total-reinforcements 13600
   
   setup-frontline
   setup-referee
@@ -285,7 +286,8 @@ to add-unit
         set current-waypoint 0
         set size 3
         set transport-type "taxi"
-        set current-units random 20
+        set current-units 5
+        ;set total-reinforcements (total-reinforcements - current-units)
         
         ;change shape of the transport depending on what kind of transport is being modeled
         if (transport-type = "taxi")
@@ -704,9 +706,13 @@ to go-transport
     ; Back at Paris
     ifelse (returning = 1 and current-waypoint = 0) [
       ; TODO fix for trains
-      set current-units 10 * taxi-aggro
+      set current-units 5 * taxi-aggro
+      if (total-reinforcements <= 0) [ die ]
+      set total-reinforcements (total-reinforcements - current-units)
       set returning 0
       set current-waypoint 0
+      if (total-reinforcements <= 0) [ set current-units (current-units + total-reinforcements) set total-reinforcements 0 ]
+      
     ] [
     
       foreach ([next-waypoints] of old-waypoint) [
@@ -1006,7 +1012,8 @@ to go-transport-spawner
         set current-waypoint 0
         set size 3
         set transport-type "taxi"
-        set current-units 10 * taxi-aggro
+        set current-units 5 * taxi-aggro
+        set total-reinforcements (total-reinforcements - current-units)
         
         ;change shape of the transport depending on what kind of transport is being modeled
         if (transport-type = "taxi")
@@ -1233,7 +1240,7 @@ CHOOSER
 type-to-add
 type-to-add
 "taxi" "waypoint" "french" "german" "taxi spawner" "train spawner"
-4
+2
 
 BUTTON
 1438
